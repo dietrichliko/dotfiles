@@ -1,0 +1,5 @@
+{{- $git_credential_helper := promptString "cache" -}}
+{{- $zsh_theme := promptString "powerlevel10k/powerlevel10k" -}}
+[data]
+    git_credential_helper = {{ $git_credential_helper | quote }}
+    zsh_theme = {{ $zsh_theme | quote }}
