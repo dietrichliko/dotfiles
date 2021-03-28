@@ -1,0 +1,52 @@
+#! /bin/bash
+#
+# Update iTerm2 integration and scripts
+#
+#  - https://iterm2.com/documentation-shell-integration.html
+#  - https://iterm2.com/documentation-utilities.html
+#
+# Dietrich Liko, April 2021
+
+CHEZMOI_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+
+# integration scripts
+
+echo "info: Downloading integration scripts" >&2
+
+for shell in 'bash' 'zsh'
+do
+    if ! curl -sL "https://iterm2.com/shell_integration/${shell}" \
+            -o "${CHEZMOI_DIR}/dot_iterm2_shell_integration.${shell}"; then
+        echo "error: Download of shell_integration/${shell} failed." >&2
+        exit 1
+    fi
+done
+
+# utilities
+
+echo "info: Downloading utility scripts" >&2
+
+url='https://raw.githubusercontent.com/gnachman/iterm2-website/master/source/utilities'
+
+utils=(
+    'imgcat' 
+    'imgls' 
+    'it2api' 
+    'i2attention' 
+    'it2check' 
+    'it2copy' 
+    'it2dl' 
+    'it2getvar' 
+    'it2setcolor' 
+    'it2setkeylabel' 
+    'it2ul' 
+    'it2universion'
+)
+
+for util in ${utils[@]}
+do
+    if ! curl -sL "$url/$util" -o "${CHEZMOI_DIR}/dot_iterm2/executable_${util}"; then
+        echo "error: Download of ${util} failed." >&2
+        exit 1
+    fi 
+done
