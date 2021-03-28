@@ -27,9 +27,9 @@ Host lxplus lxplus.cern.ch
   User liko
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
-{{- if not eq .chezmoi.os "darwin" -}}  
+{{ if not (eq .chezmoi.os "darwin") -}}  
   GSSAPITrustDns yes
-{{- endif -}}
+{{ end -}}
   ForwardAgent yes
 
 Host *.cern.ch
@@ -38,12 +38,12 @@ Host *.cern.ch
   GSSAPIDelegateCredentials yes
   ForwardAgent yes
 
-{{- if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 Host *
   UseKeychain yes
   AddKeysToAgent yes
   IdentityFile ~/.ssh/id_rsa
   IdentityFile ~/.ssh/id_ecdsa
   XAuthLocation /opt/local/bin/xauth
-{{- endif -}}
+{{ end -}}
 

@@ -1,0 +1,7 @@
+[data]
+{{ if eq .chezmoi.os "darwin" -}}
+    git_credential_helper = "osxkeychain"
+{{ else -}}
+    git_credential_helper = "cache"
+{{ end -}}
+    zsh_theme = "powerlevel10k/powerlevel10k"
