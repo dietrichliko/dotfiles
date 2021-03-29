@@ -10,6 +10,7 @@ My dotfiles managed by chezmoi (http://chezmoi.io)
 
 # oh my zsh
 
+https://ohmyz.sh
 # bash it
 
 # powerlevel 10k

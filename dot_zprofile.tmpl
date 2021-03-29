@@ -1,0 +1,12 @@
+# File managed by chezmoi. DO NOT EDIT
+
+{{ if eq .chezmoi.os "darwin" -}}
+# MacPorts and local
+export PATH="/opt/local/bin:/opt/local/sbin:~/.local/bin:$PATH"
+{{ else -}}
+export PATH="~/.local/bin:$PATH"
+{{ end -}}
+
+export ITERM2_SQUELCH_MARK=1
+source ~/.iterm2_shell_integration.zsh
+
