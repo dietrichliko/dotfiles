@@ -74,6 +74,8 @@ export SCM_CHECK=true
 # Load Bash It
 source "$BASH_IT"/bash_it.sh
 
+export POWERLINE_PROMPT="scm python_venv cwd"
+
 {{ if eq .chezmoi.os "darwin" -}}
 # MacPorts and local
 export PATH="/opt/local/bin:/opt/local/sbin:~/.local/bin:$PATH"
