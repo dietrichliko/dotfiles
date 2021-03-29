@@ -5,3 +5,5 @@ update_powerlevel10k
 oh-my-zsh-master.tar.gz
 bash-it-master.tar.gz
 powerlevel10k-master.tar.gz
+p10k.zsh
+bash-it_enabled
