@@ -7,6 +7,9 @@ export PATH="/opt/local/bin:/opt/local/sbin:${HOME}/.local/bin:$PATH"
 export PATH="${HOME}/.local/bin:$PATH"
 {{ end -}}
 
+{{ if eq .zsh_theme "powerlevel10k/powerlevel10k" -}}
 export ITERM2_SQUELCH_MARK=1
+{{ end -}}
+
 source ~/.iterm2_shell_integration.zsh
 
