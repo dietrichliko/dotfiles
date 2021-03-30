@@ -32,6 +32,16 @@ Host lxplus lxplus.cern.ch
 {{ end -}}
   ForwardAgent yes
 
+Host lxplus8 lxplus8.cern.ch
+  Hostname lxplus8.cern.ch
+  User liko
+  GSSAPIAuthentication yes
+  GSSAPIDelegateCredentials yes
+{{ if not (eq .chezmoi.os "darwin") -}}  
+  GSSAPITrustDns yes
+{{ end -}}
+  ForwardAgent yes
+
 Host *.cern.ch
   User liko
   GSSAPIAuthentication yes
