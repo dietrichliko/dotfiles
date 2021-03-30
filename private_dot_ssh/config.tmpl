@@ -25,22 +25,23 @@ Host hep*.oeaw.ac.at
 Host lxplus lxplus.cern.ch
   Hostname lxplus.cern.ch
   User liko
+  ForwardAgent yes
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
 {{ if not (eq .chezmoi.os "darwin") -}}  
   GSSAPITrustDns yes
-{{ end -}}
-  ForwardAgent yes
+{{ end }}
+
 
 Host lxplus8 lxplus8.cern.ch
   Hostname lxplus8.cern.ch
   User liko
+  ForwardAgent yes
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
 {{ if not (eq .chezmoi.os "darwin") -}}  
   GSSAPITrustDns yes
-{{ end -}}
-  ForwardAgent yes
+{{ end }}
 
 Host *.cern.ch
   User liko
