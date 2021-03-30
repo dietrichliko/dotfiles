@@ -78,9 +78,9 @@ export POWERLINE_PROMPT="scm python_venv cwd"
 
 {{ if eq .chezmoi.os "darwin" -}}
 # MacPorts and local
-export PATH="/opt/local/bin:/opt/local/sbin:~/.local/bin:$PATH"
+export PATH="/opt/local/bin:/opt/local/sbin:${HOME}/.local/bin:$PATH"
 {{ else -}}
-export PATH="~/.local/bin:$PATH"
+export PATH="${HOME}/.local/bin:$PATH"
 {{ end -}}
 
 source ~/.iterm2_shell_integration.bash
