@@ -1,2 +1,0 @@
-curl -s -L -o bash-it-master.tar.gz https://github.com/Bash-it/bash-it/archive/master.tar.gz
-chezmoi import --strip-components 1 --destination ${HOME}/.bash-it bash-it-master.tar.gz
