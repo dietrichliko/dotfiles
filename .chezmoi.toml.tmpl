@@ -2,7 +2,7 @@
     # Git Credential helper
     # Values: cache, osxkeychain, libsecret, ... 
     # See also: https://git-scm.com/docs/gitcredentials
-{{- if eq .chezmoi.os "darwin" -}}
+{{  if eq .chezmoi.os "darwin" }}
     git_credential_helper = "osxkeychain"
 {{ else }}
     git_credential_helper = "cache"
