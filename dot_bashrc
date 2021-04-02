@@ -1,0 +1,35 @@
+# .bashrc
+# Source global definitions
+
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+HISTTIMEFORMAT="%d/%m/%y %T "
+HISTSIZE=500000
+HISTFILESIZE=100000
+HISTCONTROL="erasedups:ignoreboth"
+
+shopt -s no_empty_cmd_completion
+shopt -s checkwinsize
+shopt -s globstar 2> /dev/null
+shopt -s nocaseglob;
+shopt -s cmdhist
+shopt -s autocd 2> /dev/null
+shopt -s dirspell 2> /dev/null
+shopt -s cdspell 2> /dev/null
+shopt -s cdable_vars
+
+if [[ $(hostname -d) == "cbe.vbc.ac.at" ]]; then
+    export eos=/eos/vbc/user/$USER
+    export store=/eos/vbc/experiments/cms/store
+    export CDPATH=".:$HOME:$eos:$store/user/liko"
+fi	
+
+if [ -f ~/.powerline-go.bash ]; then
+    . ~/.powerline-go.bash
+fi
+
+if [ -f ~/.iterm2_shell_integration.bash ]; then
+    . ~/.iterm2_shell_integration.bash
+fi
