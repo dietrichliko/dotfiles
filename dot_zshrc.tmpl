@@ -3,11 +3,18 @@
 
 # powerlevel10k instant prompt
 
+autoload is-at-least
+
 if is-at-least 5.4; then
     if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
         source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
     fi
 fi
+
+# autoload for my functions
+
+fpath=(~/.zfunc $fpath);
+autoload -U $fpath[1]/*(.:t)
 
 HISTFILE=~/.histfile
 HISTSIZE=1000
