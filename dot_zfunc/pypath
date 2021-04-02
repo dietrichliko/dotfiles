@@ -1,0 +1,4 @@
+echo "PYTHONPATH="
+for p in ${(ps.:.)PYTHONPATH}; do
+    echo "   $p"
+done

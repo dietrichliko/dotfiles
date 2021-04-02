@@ -1,0 +1,17 @@
+# ~/.zprofile
+
+# cleanup PATH @ CERN ... why ?
+if [[ $(hostname -d) == "cern.ch" ]]; then
+    for p in '/usr/condabin' '/opt/puppetlabs/bin' "${HOME}/bin" '/usr/local/sbin' '/usr/sbin'
+    do
+        PATH=${PATH/:${p}/}
+    done
+    unset SSH_ASKPASS 
+    export EDITOR=vi
+fi
+
+export PATH="${HOME}/.local/bin:${PATH}"
+
+# pyenv
+export PYENV_ROOT="${HOME}/.pyenv"
+
