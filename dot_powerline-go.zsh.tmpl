@@ -1,0 +1,51 @@
+# ~/.powerline-go.zsh
+#
+# powerline-go https://github.com/justjanne/powerline-go
+#
+# Dietrich Liko, April 2021
+
+if [[ -o interactive && $TERM != "linux" ]]; then
+
+  POWERLINE_OPTS="\
+    -max-width 50 \
+    -path-aliases {{ .powerline_path_aliases}} \
+    -theme default \
+    -hostname-only-if-ssh \
+    -duration-min 10 \
+    -cwd-max-dir-size 8 \
+    -static-prompt-indicator \
+    -modules host,cwd,perms,git,jobs \
+    -modules-right exit,venv,duration,jobs"
+
+  POWERLINE_CMD=$HOME/.local/libexec/powerline-go
+
+  zmodload zsh/datetime
+
+  function powerline_preexec() {
+      POWERLINE_TIMER=$EPOCHREALTIME
+  }
+  powerline_preexec
+  
+  function powerline_precmd() {
+
+      local -a opts
+
+      if (( ${+POWERLINE_TIMER} )); then
+          opts=('-eval' '-error' "$?")
+          opts+=('-jobs' "${${(%):%j}:-0}")
+          opts+=('-duration' "$(($EPOCHREALTIME - $POWERLINE_TIMER))")
+          
+          eval "$($POWERLINE_CMD ${=POWERLINE_OPTS} ${opts[@]})"
+
+          unset POWERLINE_TIMER
+      fi
+
+  }
+
+  [[ -z ${precmd_functions-} ]] && precmd_functions=()
+  precmd_functions=($precmd_functions powerline_precmd)
+
+  [[ -z ${preexec_functions-} ]] && preexec_functions=()
+  preexec_functions=($preexec_functions powerline_preexec)
+
+fi
