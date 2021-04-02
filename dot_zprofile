@@ -1,7 +1,7 @@
 # ~/.zprofile
 
 # cleanup PATH @ CERN ... why ?
-if [[ $(hostname -d) == "cern.ch" ]]; then
+if [[ ${(S)$(hostname -f)#*.} == "cern.ch" ]]; then
     for p in '/usr/condabin' '/opt/puppetlabs/bin' "${HOME}/bin" '/usr/local/sbin' '/usr/sbin'
     do
         PATH=${PATH/:${p}/}
