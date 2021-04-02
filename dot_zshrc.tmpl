@@ -1,13 +1,19 @@
 # .zshrc 
+# This file is managed by chezmoi. DO NOT EDIT
+
+# powerlevel10k instant prompt
+
+if is-at-least 5.4; then
+    if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+        source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+    fi
+fi
 
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
-setopt appendhistory autocd beep extendedglob nomatch notify
-bindkey -e
+setopt appendhistory autocd extendedglob nomatch notify
 
-zstyle :compinstall filename '{{ .chezmoi.homedir }}/.zshrc'
-autoload -Uz compinit
 
 # pyenv init
 if command -v pyenv 1>/dev/null 2>&1; then
@@ -19,15 +25,20 @@ fi
 #    eval "$(pyenv virtualenv-init -)"
 # fi
 
+# powerlevel10k or powerline-go
+
 if is-at-least 5.1; then
     if [ -f ~/.powerlevel10k/powerlevel10k.zsh-theme ]; then
-        . ~/.powerlevel10k/powerlevel10k.zsh-theme
+        source ~/.powerlevel10k/powerlevel10k.zsh-theme
+        [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
     fi    
 else
     if [ -f ~/.powerline-go.zsh ]; then
-        . ~/.powerline-go.zsh
+        source ~/.powerline-go.zsh
     fi
 fi
+
+# iterm2 shell integration
 
 if [ -f ~/.iterm2_shell_integration.zsh ]; then
     . ~/.iterm2_shell_integration.zsh
