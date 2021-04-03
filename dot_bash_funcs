@@ -1,0 +1,32 @@
+# .bash_funcs
+
+function path() {
+    echo "PATH="
+    echo -e "    ${PATH//:/\n    }"
+}
+export -f path
+
+function pypath() {
+    echo "PYTHONPATH="
+    if [[ -z "${PYTHONPATH}" ]]; then
+        echo -e "    ${PYTHONPATH//:/\n    }"
+    fi
+}
+export -f pypath
+
+function ldpath() {
+    echo "LD_LIBRARY_PATH="
+    if [[ ! -z "${LD_LIBRARY_PATH}" ]]; then
+        echo -e "    ${LD_LIBRARY_PATH//:/\n    }"
+    fi
+}
+export -f ldpath
+
+function dotenv () {
+    if [ -f .env ]; then
+       set -a
+       . .env
+       set +a
+    fi
+}
+export -f dotenv
