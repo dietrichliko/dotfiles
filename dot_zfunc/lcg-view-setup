@@ -1,0 +1,4 @@
+#
+local release="${1:-LCG_99}"
+local arch_os_compiler="${2:-x86_64-centos7-gcc10-opt}"
+. /cvmfs/sft.cern.ch/lcg/views/setupViews.sh "$release" "$arch_os_compiler"
