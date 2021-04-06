@@ -1,4 +1,6 @@
+{{ $location := promptString "location" -}}
 [data]
+    location = "{{ $location }}" 
     # Git Credential helper
     # Values: cache, osxkeychain, libsecret, ... 
     # See also: https://git-scm.com/docs/gitcredentials

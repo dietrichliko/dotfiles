@@ -9,7 +9,12 @@ if [[ $TERM != "linux" ]]; then
     -max-width 50 \
     -theme default \
     -hostname-only-if-ssh \
+{{- if eq .location "cern" }}
+    -path-aliases /eos/user/l/liko=EOS,/eos/cms/store=STORE \
+{{- end }}
+{{- if eq .location "clip" }}
     -path-aliases /eos/vbc/user/dietrich.liko=EOS,/eos/vbc/experiments/cms/store=STORE,/scratch-cbe/users/dietrich.liko=SCRATCH \
+{{- end }}
     -duration-min 10 \
     -cwd-max-dir-size 8 \
     -static-prompt-indicator \
