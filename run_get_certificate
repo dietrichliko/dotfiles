@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# do nothing, if certificate already exists
+[ -e ~/.globus/usercert.pem ] && exit
+
+# do nothing, if no Bitwarden session is defined
+[ -z "$BW_SESSION" ] && exit
+
+# do nothing, if one cannot read the Bitwarden status 
+[[ "$(bw status)" =~ \"status\":\"([^\"]+)\" ]] || exit
+
+# do nothing, if the status is not unlocked
+[ "${BASH_REMATCH[1]}" != "unlocked" ] && exit
+
+# do nothing, if the folder cannot be found
+[[ "$(bw list folders --search certificates)" =~ \"id\":\"([^\"]+)\" ]] || exit
+
+# do nothing, if the item is cannot be found
+[[ "$(bw list items --search grid --folderid ${BASH_REMATCH[1]})" =~ \"id\":\"([^\"]+)\" ]] || exit
+
+bw get attachment usercert.pem --itemid="${BASH_REMATCH[1]}" --output ~/.globus/usercert.pem >/dev/null
+bw get attachment userkey.pem  --itemid="${BASH_REMATCH[1]}" --output ~/.globus/userkey.pem  >/dev/null
+
+chmod 600 ~/.globus/userkey.pem

@@ -5,6 +5,10 @@ if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
+if [ -f ~/.bash_funcs ]; then
+    . ~/.bash_funcs
+fi
+
 HISTTIMEFORMAT="%d/%m/%y %T "
 HISTSIZE=500000
 HISTFILESIZE=100000

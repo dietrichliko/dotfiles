@@ -1,0 +1,36 @@
+#!/bin/sh
+
+main() {
+
+    [ -z "$BW_SESSION" ] && fatal "No Bitwarden session"
+
+    if [[ ! "$(bw status)" =~ \"status\":\"([^\"]+)\" ]]; then
+        fatal "Cannot extract Bitwarden status" 
+    fi
+    if [ "${BASH_REMATCH[1]}" != "unlocked" ]; then
+        fatal "Bitwarden session is locked."
+    fi
+
+    folder_info=$(bw list folders --search certificates)
+    if [[ ! "$folder_info" =~ \"id\":\"([^\"]+)\" ]]; then
+        fatal "Cannot find certificates folder"
+    fi
+    folder_id="${BASH_REMATCH[1]}"
+
+    # hack
+    item_info=$(bw list items --search grid --folderid $folder_id)
+    if [[ ! "$item_info" =~ \"value\":\"([^\"]+)\" ]]; then
+        fatal "Cannot extract passphrase"
+    fi
+    passphrase="${BASH_REMATCH[1]}" 
+    echo $passphrase | voms-proxy-init -pwstdin "$@"
+}
+
+fatal() {
+
+    echo "FATAL: $@"
+    exit 1
+
+}
+
+main "$@"
