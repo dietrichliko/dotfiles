@@ -2,11 +2,11 @@
 # 
 # Start a Bitwarden session
 
-if [[ ! "$(bw status)" =~ \"status\":\"([^\"]+)\" ]]; then
+if [[ ! $(bw status) =~ \"status\":\"([^\"]+)\" ]]; then
     echo "ERROR: Cannot get BitWarden status. rc = $?" >&2
     return
 fi
-case ${BASH_REMATCH[1]} in
+case $match[1] in
     'locked') 
         export BW_SESSION=$(bw unlock --raw)
         ;;
@@ -14,6 +14,6 @@ case ${BASH_REMATCH[1]} in
         echo "INFO: Bitwarden already unlocked." >&2
         ;;
     *) 
-        echo "ERROR: Bitwarden in unexpected state ${BASH_REMATCH[1]}"
+        echo "ERROR: Bitwarden in unexpected state $match[1]"
         ;;
 esac
