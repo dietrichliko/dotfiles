@@ -1,0 +1,45 @@
+#!/bin/bash 
+#
+# Get user certificate and ssh-keys from Bitwarden
+
+# Skip, if Bitwarden is not unlocked
+[ -z "$BW_SESSION" ] && exit
+[[ "$(bw status)" =~ \"status\":\"([^\"]+)\" ]] || exit
+[ ${BASH_REMATCH[1]} != "unlocked" ] && exit
+
+# Skip, if the folder cannot be found
+[[ "$(bw list folders --search certificates)" =~ \"id\":\"([^\"]+)\" ]] || exit
+folderid=${BASH_REMATCH[1]}
+
+# get grid certificate
+if [ ! -e ~/.globus/usercert.pem ]; then
+
+    item_info=$(bw list items --search grid --folderid $folderid)
+    if [[ $item_info =~ \"id\":\"([^\"]+)\" ]]; then 
+
+        item_id=${BASH_REMATCH[1]}
+        bw get attachment usercert.pem --itemid=$item_id \
+                            --output ~/.globus/usercert.pem >/dev/null
+        bw get attachment userkey.pem --itemid=$item_id \
+                            --output ~/.globus/userkey.pem >/dev/null
+        chmod 600 ~/.globus/userkey.pem
+    fi
+fi
+
+# get ssh keys
+# for key in rsa ecdsa; do
+#
+#    if [ ! -e ~/.ssh/id_$key ]; then
+#
+#        item_info=$(bw list items --search ssh-$key --folderid $folderid)
+#        if [[ $item_info =~ \"id\":\"([^\"]+)\" ]]; then 
+#    
+#            item_id=${BASH_REMATCH[1]}
+#            bw get attachment id_$key --itemid=$item_id \
+#                                --output ~/.ssh/id_$key >/dev/null
+#            bw get attachment id_$key.pub --itemid=$item_id \
+#                                --output ~/.ssh/id_$key.pub >/dev/null
+#            chmod 600 ~/.ssh/id_$key
+#        fi
+#    fi
+# done
