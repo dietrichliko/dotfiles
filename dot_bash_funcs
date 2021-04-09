@@ -8,7 +8,7 @@ export -f path
 
 function pypath() {
     echo "PYTHONPATH="
-    if [[ -z "${PYTHONPATH}" ]]; then
+    if [[ ! -z "${PYTHONPATH}" ]]; then
         echo -e "    ${PYTHONPATH//:/\n    }"
     fi
 }
