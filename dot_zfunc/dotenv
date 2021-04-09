@@ -1,4 +1,7 @@
-#
+# ~/.zfunc/dotenv
+# 
+# just soure the .env file
+
 if [ -f .env ]; then
     set -a
     . .env

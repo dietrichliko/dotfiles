@@ -1,29 +1,32 @@
-[ -v SINGULARITY_NAME ] || export SINGULARITY_NAME="" 
+# .powerline-go.bash
 
-POWERLINE_OPTS="\
-    -max-width 50 \
-    -theme default \
-    -hostname-only-if-ssh \
+if [ "$TERM" != "linux" ] && [ -e ~/.fancy ]; then
+
+    [ -v SINGULARITY_NAME ] || export SINGULARITY_NAME="" 
+
+    POWERLINE_OPTS="\
+        -max-width 50 \
+        -theme default \
+        -hostname-only-if-ssh \
 {{- if eq .location "cern" }}
-    -path-aliases /eos/user/l/liko=EOS,/eos/cms/store=STORE \
+        -path-aliases /eos/user/l/liko=EOS,/eos/cms/store=STORE \
 {{- end }}
 {{- if eq .location "clip" }}
-    -path-aliases /eos/vbc/user/dietrich.liko=EOS,/eos/vbc/experiments/cms/store=STORE,/scratch-cbe/users/dietrich.liko=SCRATCH \
+        -path-aliases /eos/vbc/user/dietrich.liko=EOS,/eos/vbc/experiments/cms/store=STORE,/scratch-cbe/users/dietrich.liko=SCRATCH \
 {{- end }}
-    -cwd-max-dir-size 8 \
-    -static-prompt-indicator \
-    -shell-var SINGULARITY_NAME \
-    -shell-var-no-warn-empty \
-    -modules host,venv,shell-var,jobs,cwd,perms,git,exit" 
+        -cwd-max-dir-size 8 \
+        -static-prompt-indicator \
+        -shell-var SINGULARITY_NAME \
+        -shell-var-no-warn-empty \
+        -modules host,venv,shell-var,jobs,cwd,perms,git,exit" 
 
-POWERLINE_CMD="$HOME/.local/libexec/powerline-go"
+    POWERLINE_CMD="$HOME/.local/libexec/powerline-go"
 
 
-function powerline_ps1() {
-    set -- ${POWERLINE_OPTS}
-    PS1="$(${POWERLINE_CMD} $@ -error $? $duration -jobs $(jobs -p | wc -l) )"
-}
+    function powerline_ps1() {
+        set -- ${POWERLINE_OPTS}
+        PS1="$(${POWERLINE_CMD} $@ -error $? $duration -jobs $(jobs -p | wc -l) )"
+    }
 
-if [ "$TERM" != "linux" ] && [ -f "$POWERLINE_CMD" ] && [ -e ~/.fancy ]; then
     PROMPT_COMMAND="powerline_ps1; $PROMPT_COMMAND"
 fi
