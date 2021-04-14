@@ -37,10 +37,14 @@ export store=/eos/cms/store
 export CDPATH=".:${HOME}:${eos}"
 {{- end }}
 
-if [ -f ~/.powerline-go.bash ]; then
-    . ~/.powerline-go.bash
+if [ -z $PROMPT ]; then 
+    if [ -f ~/.powerline-go.bash ]; then
+       . ~/.powerline-go.bash
+    fi
+
+    if [ -f ~/.iterm2_shell_integration.bash ]; then
+       . ~/.iterm2_shell_integration.bash
+    fi
 fi
 
-if [ -f ~/.iterm2_shell_integration.bash ]; then
-    . ~/.iterm2_shell_integration.bash
-fi
+alias ganga='/cvmfs/ganga.cern.ch/Ganga/install/LATEST/bin/ganga'
