@@ -5,15 +5,18 @@ Host clip cbe.vbc.ac.at
   User dietrich.liko
   ForwardAgent yes
 
+Host *.cbe.vbc.ac.at
+  User dietrich.liko
+  ForwardAgent yes
+
 Host cmsconnect login-el7.uscms.org
   Hostname login-el7.uscms.org
   User liko
   ForwardAgent yes
 
-Host hepgpu01.hephy.at
+Host hepgpu
+  Hostname 10.21.11.51
   User dliko
-  GSSAPIAuthentication yes
-  GSSAPIDelegateCredentials yes
   ForwardAgent yes
 
 Host hep*.oeaw.ac.at
