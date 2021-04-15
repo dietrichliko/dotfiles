@@ -5,3 +5,8 @@ if [ -f ~/.bashrc ]; then
 fi
 
 export PATH="${HOME}/.local/bin:${PATH}"
+
+{{- if eq .location "cmsconnect" }}
+export SAVEPYTHONPATH=$PYTHONPATH
+unset PYTHONPATH
+{{- end }}
