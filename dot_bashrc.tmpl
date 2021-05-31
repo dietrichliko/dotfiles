@@ -48,3 +48,8 @@ if [ -z $PROMPT ]; then
 fi
 
 alias ganga='/cvmfs/ganga.cern.ch/Ganga/install/LATEST/bin/ganga'
+
+{{- if eq .location "clip" }}
+# Conda setup
+eval "$('/software/2020/software/anaconda3/2019.10/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+{{- end }}
