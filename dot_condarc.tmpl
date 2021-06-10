@@ -1,10 +1,9 @@
-auro_activate_base: false
+auto_activate_base: false
 
 {{- if eq .location "clip" }}
-envs_dir:
-  - /scratch-cbe/users/dietrich.liko/conda/envs
-  - /mnt/hephy//dietrich.liko/conda/envs
+envs_dirs:
+  - /mnt/hephy/dietrich.liko/conda/envs
 
 pkgs_dirs:
-  - /scratch-cbe/users/dietrich.liko/conda/pkgs
+  - /mnt/hephy/dietrich.liko/conda/pkgs
 {{- end }}
