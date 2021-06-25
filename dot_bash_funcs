@@ -48,6 +48,9 @@ function bw-session() {
         return
     fi
     case ${BASH_REMATCH[1]} in
+        'unauthenticated')
+            export BW_SESSION=$(bw login Dietrich.Liko@gmail.com --method 2 --raw)
+            ;; 
         'locked') 
             export BW_SESSION=$(bw unlock --raw)
             ;;
