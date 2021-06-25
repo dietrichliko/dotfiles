@@ -12,8 +12,8 @@ export EDITOR=vi
 
 
 {{- if eq .chezmoi.os "darwin" }}
-# MacPorts
-export PATH="/opt/local/bin:$PATH"
+# MacPorts & .local
+export PATH="${HOME}/.local/bin:/opt/local/bin:$PATH"
 {{- else }}
 # pyenv
 export PYENV_ROOT="${HOME}/.pyenv"
