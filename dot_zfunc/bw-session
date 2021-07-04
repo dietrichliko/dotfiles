@@ -7,6 +7,9 @@ if [[ ! $(bw status) =~ \"status\":\"([^\"]+)\" ]]; then
     return
 fi
 case $match[1] in
+    'unauthenticated')
+        export BW_SESSION=$(bw login Dietrich.Liko@gmail.com --method 0 --raw)
+        ;;
     'locked') 
         export BW_SESSION=$(bw unlock --raw)
         ;;
