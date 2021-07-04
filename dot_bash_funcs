@@ -14,6 +14,23 @@ function pypath() {
 }
 export -f pypath
 
+function py27path() {
+    echo "PYTHON27PATH="
+    if [[ ! -z "${PYTHON27PATH}" ]]; then
+        echo -e "    ${PYTHON27PATH//:/\n    }"
+    fi
+}
+export -f py27path
+
+function py3path() {
+    echo "PYTHON3PATH="
+    if [[ ! -z "${PYTHON3PATH}" ]]; then
+        echo -e "    ${PYTHON3PATH//:/\n    }"
+    fi
+}
+export -f py3path
+
+
 function ldpath() {
     echo "LD_LIBRARY_PATH="
     if [[ ! -z "${LD_LIBRARY_PATH}" ]]; then

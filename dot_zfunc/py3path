@@ -1,0 +1,8 @@
+# ~/.zfunc/pypath
+# 
+# pretty print PYTHONPATH
+
+echo "PYTHON3PATH="
+for p in ${(ps.:.)PYTHON3PATH}; do
+    echo "   $p"
+done
