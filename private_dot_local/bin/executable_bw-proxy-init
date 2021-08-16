@@ -23,7 +23,11 @@ main() {
         fatal "Cannot extract passphrase"
     fi
     passphrase="${BASH_REMATCH[1]}" 
-    echo $passphrase | voms-proxy-init -pwstdin "$@"
+    if [ "$#" -eq 0 ]; then
+       echo $passphrase | voms-proxy-init -pwstdin -voms cms -rfc -valid 192:0
+    else
+       echo $passphrase | voms-proxy-init -pwstdin "$@"
+    fi
 }
 
 fatal() {
