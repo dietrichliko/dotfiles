@@ -1,9 +1,10 @@
 auto_activate_base: false
+pip_interop_enabled: True
 
 {{- if eq .location "clip" }}
 envs_dirs:
-  - /mnt/hephy/dietrich.liko/conda/envs
+  - /mnt/hephy/cms/dietrich.liko/conda/envs
 
 pkgs_dirs:
-  - /mnt/hephy/dietrich.liko/conda/pkgs
+  - /mnt/hephy/cms/dietrich.liko/conda/pkgs
 {{- end }}
