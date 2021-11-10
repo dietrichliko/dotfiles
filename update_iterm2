@@ -38,7 +38,8 @@ utils=(
     'it2dl' 
     'it2getvar' 
     'it2setcolor' 
-    'it2setkeylabel' 
+    'it2setkeylabel'
+    'i2tip' 
     'it2ul' 
     'it2universion'
 )
