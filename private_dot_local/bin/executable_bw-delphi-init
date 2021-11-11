@@ -1,0 +1,35 @@
+#!/bin/sh
+
+main() {
+
+    [ -z "$BW_SESSION" ] && fatal "No Bitwarden session"
+
+    if [[ ! "$(bw status)" =~ \"status\":\"([^\"]+)\" ]]; then
+        fatal "Cannot extract Bitwarden status" 
+    fi
+    if [ "${BASH_REMATCH[1]}" != "unlocked" ]; then
+        fatal "Bitwarden session is locked."
+    fi
+
+    # hack
+    item_info=$(bw list items --search "CERN DELPHI")
+    if [[ ! "$item_info" =~ \"username\":\"([^\"]+)\" ]]; then
+        fatal "Cannot extract username"
+    fi
+    username="${BASH_REMATCH[1]}" 
+    if [[ ! "$item_info" =~ \"password\":\"([^\"]+)\" ]]; then
+        fatal "Cannot extract password"
+    fi
+    password="${BASH_REMATCH[1]}" 
+    echo $password | kinit -fp "${username}@CERN.CH" >/dev/null
+
+}
+
+fatal() {
+
+    echo "FATAL: $@"
+    exit 1
+
+}
+
+main "$@"
