@@ -29,7 +29,7 @@ Host lxplus lxplus.cern.ch
   ForwardAgent yes
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
-{{ if not (eq .chezmoi.os "darwin") -}}  
+{{ if not (and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "amd64")) -}}  
   GSSAPITrustDns yes
 {{ end }}
 
@@ -40,7 +40,7 @@ Host lxplus8 lxplus8.cern.ch
   ForwardAgent yes
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
-{{ if not (eq .chezmoi.os "darwin") -}}  
+{{ if not (and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "amd64")) -}}  
   GSSAPITrustDns yes
 {{ end }}
 
@@ -52,10 +52,12 @@ Host *.cern.ch
 
 {{ if eq .chezmoi.os "darwin" -}}
 Host *
+{{ if eq .chezmoi.arch "amd64" -}}
   UseKeychain yes
   AddKeysToAgent yes
   IdentityFile ~/.ssh/id_rsa
   IdentityFile ~/.ssh/id_ecdsa
+{{ end }}
   XAuthLocation /opt/local/bin/xauth
 {{ end -}}
 
