@@ -1,0 +1,5 @@
+#!/bin/sh -x
+
+pl_latest=$(curl -s "https://api.github.com/repos/justjanne/powerline-go/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
+curl -sL https://github.com/justjanne/powerline-go/releases/download/${pl_latest}/powerline-go-linux-amd64 -o $HOME/.local/libexec/powerline-go
+chmod +x $HOME/.local/libexec/powerline-go
