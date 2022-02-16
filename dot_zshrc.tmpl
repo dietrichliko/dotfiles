@@ -21,17 +21,6 @@ HISTSIZE=1000
 SAVEHIST=1000
 setopt appendhistory autocd extendedglob nomatch notify
 
-
-# pyenv init
-if command -v pyenv 1>/dev/null 2>&1; then
-    eval "$(pyenv init -)"
-fi
-
-# optional
-# if [ -z "$PYENV_VIRTUALENV_INIT" ]; then
-#    eval "$(pyenv virtualenv-init -)"
-# fi
-
 # powerlevel10k or powerline-go
 
 if is-at-least 5.1; then
