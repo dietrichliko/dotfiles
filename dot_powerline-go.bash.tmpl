@@ -2,7 +2,7 @@
 
 if [ "$TERM" != "linux" ] && [ -e ~/.fancy ]; then
 
-    [ -v SINGULARITY_NAME ] || export SINGULARITY_NAME="" 
+    [ -v $SINGULARITY_NAME ] || export SINGULARITY_NAME="" 
 
     POWERLINE_OPTS="\
         -condensed \
