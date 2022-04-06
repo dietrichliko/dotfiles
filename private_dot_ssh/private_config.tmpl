@@ -44,6 +44,17 @@ Host lxplus8 lxplus8.cern.ch
   GSSAPITrustDns yes
 {{ end }}
 
+Host delphi
+  Hostname lxplus.cern.ch
+  User dliko
+  ForwardAgent yes
+  GSSAPIAuthentication yes
+  GSSAPIDelegateCredentials yes
+{{ if not (and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "amd64")) -}}  
+  GSSAPITrustDns yes
+{{ end }}
+
+
 Host *.cern.ch
   User liko
   GSSAPIAuthentication yes
