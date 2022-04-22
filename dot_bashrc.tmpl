@@ -22,6 +22,8 @@ shopt -s cmdhist
 shopt -s autocd 2> /dev/null
 shopt -s dirspell 2> /dev/null
 shopt -s cdspell 2> /dev/null
+shopt -u progcomp 
+
 
 {{- if eq .location "clip" }}
 shopt -s cdable_vars
@@ -29,6 +31,8 @@ export eos="/eos/vbc/user/${USER}"
 export scratch="${SCRATCHDIR}"
 export store=/eos/vbc/experiments/cms/store
 export CDPATH=".:${HOME}:${scratch}:${eos}:${store}/user/liko"
+export PATH="/groups/hephy/cms/Tools/scripts:$PATH"
+export PYTHONPATH="/groups/hephy/cms/Tools/python:$PYTHONPATH"
 {{- end }}
 {{- if eq .location "cern" }}
 shopt -s cdable_vars
