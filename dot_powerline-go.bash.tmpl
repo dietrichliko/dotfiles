@@ -2,9 +2,11 @@
 
 if [ "$TERM" != "linux" ] && [ -e ~/.fancy ]; then
 
-    [ -v $SINGULARITY_NAME ] || export SINGULARITY_NAME="" 
+    [ -v $SINGULARITY_NAME ] && export SINGULARITY_NAME="" 
+    [ -v $CMSSW_VERSION ] && export CMSSW_VERSION="" 
 
     POWERLINE_OPTS="\
+        -newline \
         -condensed \
         -max-width 50 \
         -theme default \
@@ -18,6 +20,7 @@ if [ "$TERM" != "linux" ] && [ -e ~/.fancy ]; then
         -cwd-max-dir-size 8 \
         -static-prompt-indicator \
         -shell-var SINGULARITY_NAME \
+        -shell-var CMSSW_VERSION \
         -shell-var-no-warn-empty \
         -modules host,venv,shell-var,jobs,cwd,perms,git,exit" 
 
