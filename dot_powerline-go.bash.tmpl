@@ -2,8 +2,8 @@
 
 if [ "$TERM" != "linux" ] && [ -e ~/.fancy ]; then
 
-    [ -v $SINGULARITY_NAME ] && export SINGULARITY_NAME="" 
-    [ -v $CMSSW_VERSION ] && export CMSSW_VERSION="" 
+    [[ !${SINGULARITY_NAME+x} ]] && export SINGULARITY_NAME="" 
+    [[ !${CMSSW_VERSION+x} ]] && export CMSSW_VERSION="" 
 
     POWERLINE_OPTS="\
         -newline \
