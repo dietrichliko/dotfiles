@@ -54,12 +54,6 @@ Host *.cern.ch
 
 {{ if eq .chezmoi.os "darwin" -}}
 Host *
-{{ if eq .chezmoi.arch "amd64" -}}
-  UseKeychain yes
-  AddKeysToAgent yes
-  IdentityFile ~/.ssh/id_rsa
-  IdentityFile ~/.ssh/id_ecdsa
-{{ end }}
   XAuthLocation /opt/local/bin/xauth
 {{ end -}}
 
