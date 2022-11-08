@@ -13,14 +13,10 @@ main() {
 
     # hack
     item_info=$(bw list items --search "CERN DELPHI")
-    if [[ ! "$item_info" =~ \"username\":\"([^\"]+)\" ]]; then
-        fatal "Cannot extract username"
-    fi
-    username="${BASH_REMATCH[1]}" 
-    if [[ ! "$item_info" =~ \"password\":\"([^\"]+)\" ]]; then
-        fatal "Cannot extract password"
-    fi
-    password="${BASH_REMATCH[1]}" 
+    username=$(echo "$item_info" | jq -r ".[].login.username)
+    [ -z "$username" ] && fatal "Cannot extract username"
+    password=$(echo "$item_info" | jq -r ".[].login.password)
+    [ -z "$password" ] && fatal "Cannot extract password"
     echo $password | kinit -fp "${username}@CERN.CH" >/dev/null
 
 }
