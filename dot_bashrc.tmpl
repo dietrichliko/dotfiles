@@ -31,6 +31,7 @@ export eos="/eos/vbc/user/${USER}"
 export scratch="${SCRATCHDIR}"
 export store=/eos/vbc/experiments/cms/store
 export CDPATH=".:${HOME}:${scratch}:${eos}:${store}/user/liko"
+alias myjobs="squeue -u $USER"
 {{- end }}
 {{- if eq .location "cern" }}
 shopt -s cdable_vars
