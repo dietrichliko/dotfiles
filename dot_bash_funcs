@@ -73,16 +73,7 @@ function bw-session() {
 
 function rucio-setup() {
     
-    # clip has no python3
-    local release=$(lsb_release -rs)
-    set -- ${release//./ }
-    if [[ $1 == "7" && ! -f /usr/bin/python3 ]]; then
-        set --
-        . /cvmfs/cms.cern.ch/rucio/setup-py2.sh
-    else
-        set --
-        . /cvmfs/cms.cern.ch/rucio/setup-py2.sh
-    fi
+  . /cvmfs/cms.cern.ch/rucio/setup-py3.sh
 
 }
 
