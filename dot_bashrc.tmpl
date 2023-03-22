@@ -51,8 +51,8 @@ if [ -z $PROMPT ]; then
 fi
 
 {{- if eq .location "clip" }}
-# Conda setup
-eval "$('/software/2020/software/anaconda3/2019.10/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+. /software/2020/software/mamba/22.11.1-4/etc/profile.d/mamba.sh
+. /software/2020/software/mamba/22.11.1-4/etc/profile.d/conda.sh
 {{- else if eq .location "fedora" }}
 # Conda setup
 eval "$('/usr/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
