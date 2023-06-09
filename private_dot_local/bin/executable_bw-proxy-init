@@ -4,25 +4,12 @@ main() {
 
     [ -z "$BW_SESSION" ] && fatal "No Bitwarden session"
 
-    if [[ ! "$(bw status)" =~ \"status\":\"([^\"]+)\" ]]; then
-        fatal "Cannot extract Bitwarden status" 
-    fi
-    if [ "${BASH_REMATCH[1]}" != "unlocked" ]; then
+    if [[ $(bw status| jq -r ".status") != "unlocked" ]]; then
         fatal "Bitwarden session is locked."
     fi
 
-    folder_info=$(bw list folders --search certificates)
-    if [[ ! "$folder_info" =~ \"id\":\"([^\"]+)\" ]]; then
-        fatal "Cannot find certificates folder"
-    fi
-    folder_id="${BASH_REMATCH[1]}"
+    passphrase=$(bw get item 1c0496b8-5c8c-4e45-96d8-acd4010eb4d7 | jq -r '.fields[] | select(.name == "passphrase") | .value')
 
-    # hack
-    item_info=$(bw list items --search grid --folderid $folder_id)
-    if [[ ! "$item_info" =~ \"value\":\"([^\"]+)\" ]]; then
-        fatal "Cannot extract passphrase"
-    fi
-    passphrase="${BASH_REMATCH[1]}" 
     if [ "$#" -eq 0 ]; then
        echo $passphrase | voms-proxy-init -pwstdin -voms cms -rfc -valid 192:0
     else

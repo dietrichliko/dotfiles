@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/sh -x
 
 function ver { printf "%03d%03d%03d%03d" $(echo "$1" | tr '.' ' '); }
 
@@ -13,6 +13,4 @@ then
 	unzip -oq /tmp/bw-linux-${bw_latest:1}.zip -x bw -d $HOME/.local/bin
 	chmod +x $HOME/.local/bin/bw
     fi
-else
-    echo "Bitwarden cli is not installed in ~/.local/bin" 1>&2
 fi
