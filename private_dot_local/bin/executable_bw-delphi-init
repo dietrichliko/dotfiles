@@ -13,9 +13,9 @@ main() {
 
     # hack
     item_info=$(bw list items --search "CERN DELPHI")
-    username=$(echo "$item_info" | jq -r ".[].login.username)
+    username=$(echo "$item_info" | jq -r ".[0].login.username")
     [ -z "$username" ] && fatal "Cannot extract username"
-    password=$(echo "$item_info" | jq -r ".[].login.password)
+    password=$(echo "$item_info" | jq -r ".[0].login.password")
     [ -z "$password" ] && fatal "Cannot extract password"
     echo $password | kinit -fp "${username}@CERN.CH" >/dev/null
 
