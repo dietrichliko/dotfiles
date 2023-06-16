@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -x
 
 main() {
 
@@ -10,10 +10,14 @@ main() {
 
     id="614223ea-4ae4-44ec-9f8c-ac5300ea104a"
     username="$(bw get username "$id")"
-    password="$(bw get password "$id")"
-
+{{- if eq .chezmoi.os "darwin" }}
+    tmpfile=$(mktemp)
+    bw get password "$id" >"$tmpfile"
+    kinit --password-file="$tmpfile" -fp "${username}@CERN.CH"
+    rm "$tmpfile"
+{{- else }}
     echo $password | kinit -fp "${username}@CERN.CH" >/dev/null
-
+{{- end }}
 }
 
 fatal() {
