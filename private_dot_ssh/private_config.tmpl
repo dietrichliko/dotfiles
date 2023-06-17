@@ -2,26 +2,23 @@
 
 Host clip cbe.vbc.ac.at
   Hostname cbe.vbc.ac.at
-  ServerAliveInterval 180
-  ServerAliveCountMax 10
   User dietrich.liko
   ForwardAgent yes
+{{ if eq .chezmoi.os "darwin" -}}
+  UseKeychain yes
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ecdsa
+{{ end -}}
 
 Host cmsconnect login-el7.uscms.org
   Hostname login-el7.uscms.org
   User liko
   ForwardAgent yes
-
-Host hepgpu
-  Hostname 10.21.11.51
-  User dliko
-  ForwardAgent yes
-
-Host hep*.oeaw.ac.at
-  User dliko
-  GSSAPIAuthentication yes
-  GSSAPIDelegateCredentials yes
-  ForwardAgent yes
+{{ if eq .chezmoi.os "darwin" -}}
+  UseKeychain yes
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ecdsa
+{{ end -}}
 
 Host lxplus lxplus.cern.ch
   Hostname lxplus.cern.ch
@@ -30,7 +27,6 @@ Host lxplus lxplus.cern.ch
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
 
-
 Host lxplus8 lxplus8.cern.ch
   Hostname lxplus8.cern.ch
   User liko
@@ -38,19 +34,20 @@ Host lxplus8 lxplus8.cern.ch
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
 
+Host lxplus9 lxplus9.cern.ch
+  Hostname lxplus8.cern.ch
+  User liko
+  ForwardAgent yes
+  GSSAPIAuthentication yes
+  GSSAPIDelegateCredentials yes
+
+
 Host delphi
   Hostname lxplus.cern.ch
   User dliko
   ForwardAgent yes
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
-
-
-Host *.cern.ch
-  User liko
-  GSSAPIAuthentication yes
-  GSSAPIDelegateCredentials yes
-  ForwardAgent yes
 
 {{ if eq .chezmoi.os "darwin" -}}
 Host *
