@@ -10,13 +10,11 @@ main() {
 
     id="86e7067a-6e82-41b9-a6f8-add4010274f5"
     username="$(bw get username "$id")"
+    password="$(bw get password "$id")"
 {{- if eq .chezmoi.os "darwin" }}
-    tmpfile=$(mktemp)
-    bw get password "$id" >"$tmpfile"
-    kinit --password-file="$tmpfile" -fp "${username}@CERN.CH"
-    rm "$tmpfile"
+    echo "$password" | kinit --password-file=STDIN -fp "${username}@CERN.CH"
 {{- else }}
-    echo $password | kinit -fp "${username}@CERN.CH" >/dev/null
+    echo "$password" | kinit -fp "${username}@CERN.CH"
 {{- end }}
 }
 
