@@ -1,0 +1,11 @@
+{{ if not (eq .location "clip") }}
+[".powerlevel10k"]
+    type = "archive"
+    url = "https://github.com/romkatv/powerlevel10k/archive/v1.19.0.tar.gz"
+    exact = true
+    stripComponents = 1
+{{ end }}
+[".local/libexec/powerline-go"]
+   type = "file"
+   url = "https://github.com/justjanne/powerline-go/releases/download/v1.24/powerline-go-{{ .chezmoi.os }}-{{ .chezmoi.arch }}"
+   executable = true

@@ -1,6 +1,7 @@
 update_iterm2
 LICENSE
 README.md
+p10k.zsh
 {{- if eq .location "clip" }}
 .zprofile
 .zshrc
