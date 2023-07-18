@@ -10,7 +10,7 @@ then
     if [ $(ver ${bw_latest:1}) -ge $(ver $bw_version) ]
     then
         curl -sL https://github.com/bitwarden/cli/releases/download/${bw_latest}/bw-linux-${bw_latest:1}.zip -o /tmp/bw-linux-${bw_latest:1}.zip
-	unzip -oq /tmp/bw-linux-${bw_latest:1}.zip -x bw -d $HOME/.local/bin
+	unzip -oq /tmp/bw-linux-${bw_latest:1}.zip -d $HOME/.local/bin
 	chmod +x $HOME/.local/bin/bw
     fi
 else
