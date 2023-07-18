@@ -58,3 +58,5 @@ fi
 eval "$('/usr/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 export EDITOR=/usr/bin/vi
 {{- end }}
+
+eval $(direnv hook bash)
