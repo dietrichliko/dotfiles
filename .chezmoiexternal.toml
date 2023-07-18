@@ -10,7 +10,7 @@
    url = "https://github.com/justjanne/powerline-go/releases/download/{{ (gitHubLatestTag "justjanne/powerline-go").Name }}/powerline-go-{{ .chezmoi.os }}-{{ .chezmoi.arch }}"
    executable = true
 {{ if not (eq .chezmoi.os "Darwin") }}
-[".local/lib/direnv"]
+[".local/bin/direnv"]
    type = "file"
    url = "https://github.com/direnv/direnv/releases/download/{{ (gitHubLatestTag "direnv/direnv").Name }}/direnv.{{ .chezmoi.os }}-{{ .chezmoi.arch }}"
    executable=true

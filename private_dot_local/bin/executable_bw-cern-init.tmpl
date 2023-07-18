@@ -12,7 +12,7 @@ main() {
     username="$(bw get username "$id")"
     password="$(bw get password "$id")"
 {{- if eq .chezmoi.os "darwin" }}
-    echo "$password" | kinit --password-file=STDIN -fp "${username}@CERN.CH"
+    echo "$password" | /usr/bin/kinit --password-file=STDIN --keychain -fp "${username}@CERN.CH"
 {{- else }}
     echo "$password" | kinit -fp "${username}@CERN.CH"
 {{- end }}
