@@ -1,11 +1,17 @@
 {{ if not (eq .location "clip") }}
 [".powerlevel10k"]
     type = "archive"
-    url = "https://github.com/romkatv/powerlevel10k/archive/v1.19.0.tar.gz"
+    url = "https://github.com/romkatv/powerlevel10k/archive/{{ (gitHubLatestTag "romkatv/powerlevel10k").Name }}.tar.gz"
     exact = true
     stripComponents = 1
 {{ end }}
 [".local/libexec/powerline-go"]
    type = "file"
-   url = "https://github.com/justjanne/powerline-go/releases/download/v1.24/powerline-go-{{ .chezmoi.os }}-{{ .chezmoi.arch }}"
+   url = "https://github.com/justjanne/powerline-go/releases/download/{{ (gitHubLatestTag "justjanne/powerline-go").Name }}/powerline-go-{{ .chezmoi.os }}-{{ .chezmoi.arch }}"
    executable = true
+{{ if not (eq .chezmoi.os "Darwin") }}
+[".local/libexec/direnv"]
+   type = "file"
+   url = "https://github.com/direnv/direnv/releases/download/{{ (gitHubLatestTag "direnv/direnv").Name }}/direnv.{{ .chezmoi.os }}-{{ .chezmoi.arch }}"
+   executable=true
+{{ end }}
