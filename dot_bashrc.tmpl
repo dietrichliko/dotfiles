@@ -32,6 +32,7 @@ export scratch="${SCRATCHDIR}"
 export store=/eos/vbc/experiments/cms/store
 export CDPATH=".:${HOME}:${scratch}:${eos}:${store}/user/liko"
 alias myjobs="squeue -u $USER"
+alias eosquota="eos root://eos.grid.vbc.ac.at/ quota /eos/vbc/experiments/cms/store/user"
 {{- end }}
 {{- if eq .location "cern" }}
 shopt -s cdable_vars

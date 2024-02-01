@@ -2,7 +2,6 @@ update_iterm2
 LICENSE
 README.md
 p10k.zsh
-.powerlevel10k/**/*.zwc
 {{- if eq .location "clip" }}
 .zprofile
 .zshrc
