@@ -24,30 +24,41 @@ Host lxplus lxplus.cern.ch
   Hostname lxplus.cern.ch
   User liko
   ForwardAgent yes
+{{ if ne .chezmoi.os "darwin" -}}
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
+  GSSAPITrustDNS yes
+{{ end -}}
 
 Host lxplus8 lxplus8.cern.ch
   Hostname lxplus8.cern.ch
   User liko
   ForwardAgent yes
+{{ if ne .chezmoi.os "darwin" -}}
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
+  GSSAPITrustDNS yes
+{{ end -}}
 
 Host lxplus9 lxplus9.cern.ch
   Hostname lxplus8.cern.ch
   User liko
   ForwardAgent yes
+{{ if ne .chezmoi.os "darwin" -}}
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
-
+  GSSAPITrustDNS yes
+{{ end -}}
 
 Host delphi
   Hostname lxplus.cern.ch
   User dliko
   ForwardAgent yes
+{{ if ne .chezmoi.os "darwin" -}}
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
+  GSSAPITrustDNS yes
+{{ end -}}
 
 {{ if eq .chezmoi.os "darwin" -}}
 Host *

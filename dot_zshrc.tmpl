@@ -45,7 +45,7 @@ fi
 eval "$('/software/2020/software/anaconda3/2019.10/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 {{- else if eq .location "fedora" }}
 # Conda setup
-eval "$('/usr/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+eval "$('/opt/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 export EDITOR=/usr/bin/vi
 {{- end }}
 
