@@ -32,9 +32,9 @@ Host lxplus lxplus.cern.ch
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
   GSSAPITrustDNS yes
-  ControlPath ~/.ssh/%r@%h:%p
-{{- else }}
   ControlPath /run/user/%i/%r@%h:%p
+{{- else }}
+  ControlPath ~/.ssh/%r@%h:%p
 {{- end }}
   ControlMaster auto
   ControlPersist 1m
