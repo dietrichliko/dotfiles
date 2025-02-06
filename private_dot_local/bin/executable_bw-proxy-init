@@ -1,27 +1,22 @@
 #!/bin/bash
+#
+# Create voms-proxy with password from Bitwarden
+#
+# Dietrich Liko, Feb 2025
 
-main() {
+set -e
 
-    [ -z "$BW_SESSION" ] && fatal "No Bitwarden session"
+ID="1c0496b8-5c8c-4e45-96d8-acd4010eb4d7"
+VOMS_OPTIONS="-voms cms -rfc -valid 192:0"
 
-    if [[ $(bw status| jq -r ".status") != "unlocked" ]]; then
-        fatal "Bitwarden session is locked."
-    fi
+# anonymous pipe
+PIPE=$(mktemp -u)
+mkfifo "$PIPE"
+exec 4<>"$PIPE"
+rm "$PIPE"
 
-    passphrase=$(bw get item 1c0496b8-5c8c-4e45-96d8-acd4010eb4d7 | jq -r '.fields[] | select(.name == "passphrase") | .value')
+bw --nointeraction get item "$ID" | jq -r '.fields.[] | select(.name="passphrase") | .value' >&4
+echo >&4
 
-    if [ "$#" -eq 0 ]; then
-       echo $passphrase | voms-proxy-init -pwstdin -voms cms -rfc -valid 192:0
-    else
-       echo $passphrase | voms-proxy-init -pwstdin "$@"
-    fi
-}
+voms-proxy-init -pwstdin "$VOMS_OPTIONS" <&4
 
-fatal() {
-
-    echo "FATAL: $@"
-    exit 1
-
-}
-
-main "$@"

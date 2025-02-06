@@ -1,0 +1,32 @@
+#!/bin/bash 
+#
+# ssh login with  password and TOTP from Bitwarden
+# Use SSH ControlMaster, if available
+#
+# Dietrich Liko, Feb 2025
+
+HOSTNAME="delphi"
+ID="86e7067a-6e82-41b9-a6f8-add4010274f5"
+#SSHPASS_OPTS="-v"
+TOTP_PROMPT="Your 2nd factor (dliko):"
+TOTP_COMMAND="bw --nointeraction get totp $ID"
+
+# Check for ControlMaster
+ssh -O check "$HOSTNAME" >& /dev/null
+if [ $? -eq 0 ]; then
+    ssh "$@" "$HOSTNAME"
+    exit
+fi
+
+set -e
+
+# anonymous pipe
+PIPE=$(mktemp -u)
+mkfifo "$PIPE"
+exec 4<>"$PIPE"
+rm "$PIPE"
+
+# sshpass with TOTP
+bw --nointeraction get password "$ID" >&4
+echo >&4
+sshpass ${SSHPASS_OPTS} -d4 -O "$TOTP_PROMPT" -c "$TOTP_COMMAND" ssh "$@" "$HOSTNAME" 
