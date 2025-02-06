@@ -24,9 +24,6 @@ Host lxplus lxplus.cern.ch
   Hostname lxplus.cern.ch
   User liko
   ForwardAgent yes
-  ProxyJump none
-  PubkeyAuthentication no
-  CheckHostIP no
   ServerAliveInterval 100
 {{- if ne .chezmoi.os "darwin" }}
   ControlPath /run/user/%i/%r@%h:%p
@@ -40,9 +37,6 @@ Host delphi
   Hostname lxplus.cern.ch
   User dliko
   ForwardAgent yes
-  ProxyJump none
-  PubkeyAuthentication no
-  CheckHostIP no
   ServerAliveInterval 100
 {{- if ne .chezmoi.os "darwin" }}
   ControlPath /run/user/%i/%r@%h:%p
