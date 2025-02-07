@@ -25,6 +25,7 @@ Host lxplus lxplus.cern.ch
   User liko
   ForwardAgent yes
   ServerAliveInterval 100
+  PubkeyAuthentication no
 {{- if ne .chezmoi.os "darwin" }}
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
@@ -41,6 +42,7 @@ Host delphi
   User dliko
   ForwardAgent yes
   ServerAliveInterval 100
+  PubkeyAuthentication no
 {{- if ne .chezmoi.os "darwin" }}
   GSSAPIAuthentication yes
   GSSAPIDelegateCredentials yes
