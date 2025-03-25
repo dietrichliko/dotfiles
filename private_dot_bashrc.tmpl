@@ -1,0 +1,28 @@
+# .bashrc
+# Source global definitions
+
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+if [ -f ~/.bash_funcs ]; then
+    . ~/.bash_funcs
+fi
+
+HISTTIMEFORMAT="%d/%m/%y %T "
+HISTSIZE=500000
+HISTFILESIZE=100000
+HISTCONTROL="erasedups:ignoreboth"
+
+shopt -s no_empty_cmd_completion
+shopt -s checkwinsize
+shopt -s globstar 2> /dev/null
+shopt -s nocaseglob;
+shopt -s cmdhist
+shopt -s autocd 2> /dev/null
+shopt -s dirspell 2> /dev/null
+shopt -s cdspell 2> /dev/null
+shopt -u progcomp
+
+eval "$(direnv hook bash)"
+eval "$(starship init bash)"

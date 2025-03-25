@@ -1,17 +1,15 @@
-{{ if not (eq .location "clip") }}
-[".powerlevel10k"]
-    type = "archive"
-    url = "https://github.com/romkatv/powerlevel10k/archive/{{ (gitHubLatestTag "romkatv/powerlevel10k").Name }}.tar.gz"
-    exact = true
-    stripComponents = 1
-{{ end }}
-[".local/libexec/powerline-go"]
-   type = "file"
-   url = "https://github.com/justjanne/powerline-go/releases/download/{{ (gitHubLatestTag "justjanne/powerline-go").Name }}/powerline-go-{{ .chezmoi.os }}-{{ .chezmoi.arch }}"
-   executable = true
-{{ if not (eq .chezmoi.os "Darwin") }}
+{{ if CLIP or LXPLUS }}
 [".local/bin/direnv"]
    type = "file"
    url = "https://github.com/direnv/direnv/releases/download/{{ (gitHubLatestTag "direnv/direnv").Name }}/direnv.{{ .chezmoi.os }}-{{ .chezmoi.arch }}"
-   executable=true
-{{ end }}
+   executable = true
+   refreshPeriod = 168
+[".local/bin/starship"]
+   type = "archive-file"
+{{ .chezmoi.fqdnHostname "lxplus*.cern.ch" }}
+   url = "https://github.com/startship/starship/releases/download/{{ (gitHubLatestTag "starship/starship").Name }}/starship-x86_64-unknown-linux-gnu.tar.gz"
+{{ .chezmoi.fqdnHostname "lxplus*.cern.ch" }}
+   url = "https://github.com/startship/starship/releases/download/{{ (gitHubLatestTag "starship/starship").Name }}/starship-x86_64-unknown-linux-musl.tar.gz"
+   executable = true
+   refreshPeriod = 168
+{{ endif }}

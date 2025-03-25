@@ -1,15 +1,21 @@
-{{ $location := promptString "location" -}}
 [data]
-    location = "{{ $location }}" 
+{{ if regexMatch "lxplus\\d+\\.cern\\.ch" .chezmoi.fqdnHostname }}
+    location = "lxplus"
+{{ else if regexMatch "*.cbe.vbc.ac.at" .chezmoi.fqdnHostname }}
+    location = "clip"
+{{ else }}
+    location = "desktop"
+{{ endif }}
+
     # Git Credential helper
     # Values: cache, osxkeychain, libsecret, ... 
     # See also: https://git-scm.com/docs/gitcredentials
-{{  if eq .chezmoi.os "darwin" }}
+{{  if eq location "desktop" }}
+{{     if .chezmoi.os "darwin" }}
     git_credential_helper = "osxkeychain"
-{{ else }}
+{{     else }}
+    git_credential_helper = "libsecret"
+{{     endif }}
+{{  else }}
     git_credential_helper = "cache"
 {{ end }}
-    # powerline-go path aliases
-    # Format: /eos/user/l/liko=EOS,/eos/cms/store=STORE, ...
-    # See also: https://github.com/justjanne/powerline-go#readme
-    powerline_path_aliases = ""
