@@ -7,15 +7,3 @@
     location = "desktop"
 {{ end }}
 
-    # Git Credential helper
-    # Values: cache, osxkeychain, libsecret, ... 
-    # See also: https://git-scm.com/docs/gitcredentials
-{{  if eq location "desktop" }}
-{{     if .chezmoi.os "darwin" }}
-    git_credential_helper = "osxkeychain"
-{{     else }}
-    git_credential_helper = "libsecret"
-{{     end }}
-{{  else }}
-    git_credential_helper = "cache"
-{{ end }}

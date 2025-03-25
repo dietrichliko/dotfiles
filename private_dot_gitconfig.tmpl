@@ -13,7 +13,13 @@
 [diff]
         submodule = log
 [credential]
-        helper = {{ git_credential_helper }}
+{{ if and (eq .location "desktop") (eq .chezmoi.os "Darwin" }}
+        helper = osxchain
+{{ else if (eq .location "desktop") }}
+        helper = libsecret
+{{ else }}
+        helper = cache
+{{ end }}
 [init]
         defaultBranch = main
 [url "git@github.com:dietrichliko/"]
