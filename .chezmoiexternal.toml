@@ -1,4 +1,4 @@
-{{ if CLIP or LXPLUS }}
+{{ if eq .location "clip" "lxplus" }}
 [".local/bin/direnv"]
    type = "file"
    url = "https://github.com/direnv/direnv/releases/download/{{ (gitHubLatestTag "direnv/direnv").Name }}/direnv.{{ .chezmoi.os }}-{{ .chezmoi.arch }}"
@@ -6,10 +6,11 @@
    refreshPeriod = 168
 [".local/bin/starship"]
    type = "archive-file"
-{{ .chezmoi.fqdnHostname "lxplus*.cern.ch" }}
+{{ if eq .location "clip" }}
    url = "https://github.com/startship/starship/releases/download/{{ (gitHubLatestTag "starship/starship").Name }}/starship-x86_64-unknown-linux-gnu.tar.gz"
-{{ .chezmoi.fqdnHostname "lxplus*.cern.ch" }}
+{{ else }}
    url = "https://github.com/startship/starship/releases/download/{{ (gitHubLatestTag "starship/starship").Name }}/starship-x86_64-unknown-linux-musl.tar.gz"
+{{ end }}
    executable = true
    refreshPeriod = 168
-{{ endif }}
+{{ end }}

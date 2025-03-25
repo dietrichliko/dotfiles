@@ -13,7 +13,7 @@
 [diff]
         submodule = log
 [credential]
-{{ if and (eq .location "desktop") (eq .chezmoi.os "Darwin" }}
+{{ if and (eq .location "desktop") (eq .chezmoi.os "Darwin") }}
         helper = osxchain
 {{ else if (eq .location "desktop") }}
         helper = libsecret
