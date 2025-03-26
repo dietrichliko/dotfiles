@@ -15,14 +15,13 @@ HISTFILESIZE=100000
 HISTCONTROL="erasedups:ignoreboth"
 
 shopt -s no_empty_cmd_completion
-shopt -s checkwinsize
-shopt -s globstar 2> /dev/null
-shopt -s nocaseglob;
-shopt -s cmdhist
-shopt -s autocd 2> /dev/null
-shopt -s dirspell 2> /dev/null
-shopt -s cdspell 2> /dev/null
-shopt -u progcomp
+shopt -s globstar
+shopt -s nocaseglob
+shopt -s autocd 
+shopt -s dirspell
+shopt -s cdspell
+#shopt -u progcomp
 
+export DIRENV_LOG_FORMAT=
 eval "$(direnv hook bash)"
 eval "$(starship init bash)"
