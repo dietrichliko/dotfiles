@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-type rbw 2&>1 >/dev/null && exit
+type rbw 2>&1 >/dev/null && exit
 
 case "$(uname -s)" in
     Linux)
