@@ -7,6 +7,10 @@
   "notifications_url": null,
   "lock_timeout": 3600,
   "sync_interval": 3600,
+{{- if findExecutable "pinentry-gnome3" (list "/usr/bin") }}
   "pinentry": "pinentry-gnome3",
+{{ else }}
+  "pinentry": "pinentry",
+{{- end }}
   "client_cert_path": null
 }
