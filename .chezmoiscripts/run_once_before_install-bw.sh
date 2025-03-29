@@ -1,10 +1,11 @@
-#!/bin/bash -x
+#!/bin/bash
 
 type bw 2>&1 >/dev/null && exit
 
 case "$(uname -s)" in
     Linux)
         url='https://api.github.com/repos/Bitwarden/clients/releases'
+	glibc_version="$(getconf GNU_LIBC_VERSION | cut -d. -f2)"
 	if [ "$glibc_version" -le 28 ]; then
             match='bw-oss-linux-.*.zip'
 	else
