@@ -3,6 +3,10 @@
 
 autoload -U compinit; compinit
 
+fpath=(~/.zfunc $fpath);
+autoload -U $fpath[1]/*(.:t)
+
+
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000

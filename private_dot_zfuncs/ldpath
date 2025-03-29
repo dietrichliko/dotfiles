@@ -1,0 +1,8 @@
+# ~/.zfunc/ldpath
+# 
+# pretty print LD_LIBRARY_PATH
+
+echo "LD_LIBRARY_PATH="
+for p in ${(ps.:.)LD_LIBRARY_PATH}; do
+    echo "   $p"
+done

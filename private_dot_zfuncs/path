@@ -1,0 +1,8 @@
+# ~/.zfunc/path
+# 
+# pretty print PATH
+
+echo "PATH="
+for p in ${(ps.:.)PATH}; do
+    echo "   $p"
+done
