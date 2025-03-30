@@ -1,0 +1,5 @@
+#!/bin/bash
+
+env SSH_ASKPASS="$HOME/.local/libexec/bw-ssh_helper.sh" SSH_ASKPASS_REQUIRE="force" ssh "$@"
+
+
