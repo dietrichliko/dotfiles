@@ -2,6 +2,7 @@
 
 ## Quickstart
 
-sh -c "$(curl -fsLS get.chezmoi.io/lb)" -- init --apply dietrichliko
-
+```bash
+bash -c "$(curl -sL cern.ch/liko/chezmoi.sh)"
+```
 

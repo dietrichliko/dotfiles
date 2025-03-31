@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if [ -x "$BW_SESSION" ]; then
+    if [[ ! "$(bw status)" =~ \"status\":\"([^\"]+)\" ]]; then
+        echo "ERROR: Cannot get BitWarden status. rc = $?" >&2
+        exit 1
+    fi
+    case ${BASH_REMATCH[1]} in
+        'unauthenticated')
+            export BW_SESSION=$(bw login Dietrich.Liko@gmail.com --method 0 --raw)
+            ;;
+        'locked')
+            export BW_SESSION=$(bw unlock --raw)
+            ;;
+        'unlocked')
+            echo "INFO: Bitwarden already unlocked." >&2
+            ;;
+        *)
+            echo "ERROR: Bitwarden in unexpected state ${BASH_REMATCH[1]}"
+	    exit 1
+            ;;
+    esac
+fi
+
+chezmoi apply "$@"
