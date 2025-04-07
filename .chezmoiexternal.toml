@@ -16,10 +16,10 @@
    executable = true
    refreshPeriod = "168h"
 
-[".local"]
-   type = "archive"
-   url = {{ gitHubLatestReleaseAssetURL "cli/cli" (printf "gh_%s_linux_amd64.tar.gz" (substr 1 -1 (gitHubLatestRelease "cli/cli" ).TagName)) | quote }}
-   stripComponenets = 1
-   exclude = [ "LICENSE" ]
-   refreshPeriod = "168h"
+#[".local"]
+#   type = "archive"
+#   url = {{ gitHubLatestReleaseAssetURL "cli/cli" (printf "gh_%s_linux_amd64.tar.gz" (substr 1 -1 (gitHubLatestRelease "cli/cli" ).TagName)) | quote }}
+#   stripComponenets = 1
+#   exclude = [ "LICENSE" ]
+#   refreshPeriod = "168h"
 {{ end }}
