@@ -1,0 +1,33 @@
+# Custom layouts
+
+layout_cmssw() {
+    eval $(scramv1 runtime -sh)
+}
+
+layout_lcg() {
+    if [ $# -ne 2 ]; then
+       echo "Usage: layout lcg  <LCG_version> <platform>" >&2
+       exit 1
+    fi
+    path="/cvmfs/sft.cern.ch/lcg/views/$1/$2/setup.sh"
+    if [ -e "$path" ]; then
+        . "$path"
+    else
+        echo "$path does not exists." >&2
+        exit 1
+    fi
+}
+
+layout_root() {
+    if [ $# -ne 2 ]; then
+       echo "Usage: layout root  <version> <platform>" >&2
+       exit 1
+    fi 
+    path="/cvmfs/sft.cern.ch/lcg/app/releases/ROOT/$1/$2/bin/thisroot.sh"
+    if [ -e "$path" ]; then
+        . "$path"
+    else
+        echo "$path does not exist."
+        exit 1
+    fi
+}
