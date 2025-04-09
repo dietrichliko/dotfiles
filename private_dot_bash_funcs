@@ -58,7 +58,7 @@ function bw-session() {
             echo "INFO: Bitwarden already unlocked." >&2
             ;;
         *) 
-            echo "ERROR: Bitwarden in unexpected state ${BASH_REMATCH[1]}"
+            echo "ERROR: Bitwarden in unexpected state ${BASH_REMATCH[1]}" >&2
             ;;
     esac
 }
