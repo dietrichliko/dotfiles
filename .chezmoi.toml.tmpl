@@ -2,12 +2,15 @@
 {{- if regexMatch "lxplus\\d+\\.cern\\.ch" .chezmoi.fqdnHostname }}
     location = "lxplus"
     conda = ""
+    cvmfs = true
 {{ else if regexMatch "*.cbe.vbc.ac.at" .chezmoi.fqdnHostname }}
     location = "clip"
     conda = "/software/f2022/software/mamba/24.3.0-0"
+    cvmfs = true
 {{ else }}
     location = "desktop"
     conda = "/opt/miniconda3"
+    cvmfs = false
 {{ end -}}
 [edit]
     command = "vi"

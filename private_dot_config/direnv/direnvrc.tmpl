@@ -1,6 +1,11 @@
 # Custom layouts
 
+{{ if .cvmfs }}
 layout_cmssw() {
+    if [ -z "$CMSPATH" ]; then
+        echo "No CMS environment" >&2
+        exit 1
+    fi
     eval $(scramv1 runtime -sh)
 }
 
@@ -31,3 +36,5 @@ layout_root() {
         exit 1
     fi
 }
+
+{{ end }}
