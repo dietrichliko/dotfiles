@@ -32,7 +32,7 @@ Host lxplus lxplus.cern.ch
   ControlPath ~/.ssh/%r@%h:%p
 {{- end }}
   ControlMaster auto
-  ControlPersist 4h
+  ControlPersist yes
 
 Host delphi
   Hostname lxplus.cern.ch
@@ -46,7 +46,7 @@ Host delphi
   ControlPath ~/.ssh/%r@%h:%p
 {{- end }}
   ControlMaster	auto
-  ControlPersist 4h
+  ControlPersist yes
 
 {{ if eq .chezmoi.os "darwin" }}
 Host *

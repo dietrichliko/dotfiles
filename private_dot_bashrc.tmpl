@@ -22,9 +22,15 @@ shopt -s dirspell
 shopt -s cdspell
 shopt -s direxpand
 
-export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
-eval "$(direnv hook bash)"
-eval "$(starship init bash)"
+type direnv > /dev/null
+if [ $? -eq 0 ]; then
+    export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
+    eval "$(direnv hook bash)"
+fi
+type starship > /dev/null
+if [ $? -eq 0 ]; then
+    eval "$(starship init bash)"
+fi
 
 {{ if .conda }}
 # setup conda & mamba
