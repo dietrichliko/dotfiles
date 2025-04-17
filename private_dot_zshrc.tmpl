@@ -12,6 +12,8 @@ HISTSIZE=1000
 SAVEHIST=1000
 setopt appendhistory autocd extendedglob nomatch notify
 
+export CDPATH=~/working
+
 export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
 eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"

@@ -22,6 +22,8 @@ shopt -s dirspell
 shopt -s cdspell
 shopt -s direxpand
 
+export CDPATH=~/working
+
 type direnv > /dev/null 2>&1 
 if [ $? -eq 0 ]; then
     export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
