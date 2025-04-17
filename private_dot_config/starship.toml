@@ -24,6 +24,8 @@ $docker_context\
 $conda\
 [](fg:color_bg3 bg:color_bg1)\
 $time\
+[](fg:color_bg1 bg:color_bg1)\
+$direnv\
 [ ](fg:color_bg1)\
 $line_break$character"""
 
@@ -167,3 +169,8 @@ vimcmd_symbol = '[](bold fg:color_green)'
 vimcmd_replace_one_symbol = '[](bold fg:color_purple)'
 vimcmd_replace_symbol = '[](bold fg:color_purple)'
 vimcmd_visual_symbol = '[](bold fg:color_yellow)'
+
+[direnv]
+disabled = false
+symbol = " "
+format = "[[$symbol$loaded/$allowed](fg:color_fg0 bg:color_bg1)]($style)" 
