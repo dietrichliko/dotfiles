@@ -36,5 +36,22 @@ layout_root() {
         exit 1
     fi
 }
-
 {{ end }}
+
+toolbox() {
+    # Check if we are inside a Toolbox container by checking /run/.toolboxenv
+    if [ -e /run/.toolboxenv ]; then
+        # Extract the container name from /run/.containerenv
+        name=$(sed -n 's/^name="\([^"]*\)"/\1/p' /run/.containerenv)
+        
+        # Check if the container name matches the expected name
+        if [ "$name" != "$1" ]; then
+            echo "Error: This is not the '$1' toolbox. You are currently in '$name'." >&2
+            exit 1
+        fi
+    else
+        # If the toolbox environment file doesn't exist, we're outside the container
+        echo "Error: You are outside of a toolbox container. Expected '$1'." >&2
+        exit 1
+    fi
+}
