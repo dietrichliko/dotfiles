@@ -7,7 +7,7 @@
 set -e
 
 ID="1c0496b8-5c8c-4e45-96d8-acd4010eb4d7"
-VOMS_OPTIONS="-voms cms -rfc -valid 192:0"
+VOMS_OPTIONS="--voms cms --rfc --valid 192:0"
 
 # anonymous pipe
 PIPE=$(mktemp -u)
@@ -15,8 +15,8 @@ mkfifo "$PIPE"
 exec 4<>"$PIPE"
 rm "$PIPE"
 
-bw --nointeraction get item "$ID" | jq -r '.fields.[] | select(.name="passphrase") | .value' >&4
+bw --nointeraction get item "$ID" | jq -r '.fields[] | select(.name="passphrase") | .value' >&4
 echo >&4
 
-voms-proxy-init -pwstdin "$VOMS_OPTIONS" <&4
+voms-proxy-init --pwstdin $VOMS_OPTIONS <&4
 
