@@ -15,7 +15,7 @@ Host clip-el9
   User dietrich.liko
   ForwardAgent yes
   RequestTTY force
-  RemoteCommand apptainer -s exec --env SCRAM_ARCH=  /cvmfs/unpacked.cern.ch/registry.hub.docker.com/cmssw/el9:x86_64 sh -c 'source /cvmfs/cms.cern.ch/cmsset_default.sh; /bin/bash -l'
+  RemoteCommand apptainer -s exec --env SCRAM_ARCH= --bind /groups,/run/user /cvmfs/unpacked.cern.ch/registry.hub.docker.com/cmssw/el9:x86_64 sh -c 'source /cvmfs/cms.cern.ch/cmsset_default.sh; /bin/bash -l'
 
 Host cmsconnect login-el7.uscms.org
   Hostname login-el7.uscms.org
