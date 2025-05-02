@@ -10,15 +10,12 @@ Host clip cbe.vbc.ac.at
   IdentityFile ~/.ssh/id_ecdsa
 {{ end }}
 
-{{ if eq .location "desktop" }}
-Host clip9
+Host clip-el9
   Hostname cbe.vbc.ac.at
   User dietrich.liko
   ForwardAgent yes
   RequestTTY force
-  RemoteCommand /cvmfs/cms.cern.ch/common/cmssw-el9 --interactive
-{{ end }}
-
+  RemoteCommand apptainer -s exec --env SCRAM_ARCH=  /cvmfs/unpacked.cern.ch/registry.hub.docker.com/cmssw/el9:x86_64 sh -c 'source /cvmfs/cms.cern.ch/cmsset_default.sh; /bin/bash -l'
 
 Host cmsconnect login-el7.uscms.org
   Hostname login-el7.uscms.org
