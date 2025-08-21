@@ -1,6 +1,10 @@
 # .bash_profile
 
-export PATH="${HOME}/.local/bin:${PATH}"
+{{ if eq .chezmoi.os "darwin" }}
+export PATH="$HOME/.local/bin:/opt/local/bin:/opt/local/sbin:$PATH"
+{{ else }}
+export PATH="$HOME/.local/bin:$PATH"
+{{ end }}
 
 if [ -f ~/.bashrc ]; then
     . ~/.bashrc

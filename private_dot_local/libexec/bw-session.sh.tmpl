@@ -5,22 +5,22 @@ set -e
 get_secret() {
 {{ if (eq .chezmoi.os "Darwin") }}
   security find-generic-password -a "$USER" -s "$SESSION_KEY" -w 2>/dev/null || true
-{{ elif (eq .location "Desktop") }}
+{{ else if (eq .location "Desktop") }}
   secret-tool lookup user "$USER" key "$SESSION_KEY" 2>/dev/null || true
 {{ else }}
   keyctl search @u user "$SESSION_KEY" 2>/dev/null | xargs keyctl read 2>/dev/null || true
-{{ endif }}
+{{ end }}
 }
 
 store_secret() {
   token="$1"
-{{ if .eq. .chezmoi.os "Darwin" }}
+{{ if (eq .chezmoi.os "Darwin") }}
   security add-generic-password -a "$USER" -s "$SESSION_KEY" -w "$token" -U >/dev/null
-{{ elif (eq .location "Desktop") }}
+{{ else if (eq .location "Desktop") }}
   echo -n "$token" | secret-tool store --label="Bitwarden Session" user "$USER" key "$SESSION_KEY"
 {{ else }}
   echo -n "$token" | keyctl padd user "$SESSION_KEY" @u >/dev/null
-{{ endif }}
+{{ end }}
 }
 
 is_valid() {
