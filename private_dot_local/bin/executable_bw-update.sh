@@ -10,6 +10,16 @@ API_URL="https://api.github.com/repos/bitwarden/clients/releases"
 
 mkdir -p "$INSTALL_DIR"
 
+# Detect if bw exists elsewhere in PATH
+if command -v bw >/dev/null 2>&1; then
+    BW_PATH="$(command -v bw)"
+    if [[ "$BW_PATH" != "$BW_BIN" ]]; then
+        echo "bw already installed at $BW_PATH (not managed by this script)."
+        echo "Doing nothing."
+        exit 0
+    fi
+fi
+
 # Determine platform
 case "$(uname -s)" in
   Linux*)   PLATFORM="linux" ;;
