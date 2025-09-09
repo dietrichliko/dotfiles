@@ -33,7 +33,7 @@ Host lxplus lxplus.cern.ch
   ForwardAgent yes
   ServerAliveInterval 100
   PubkeyAuthentication no
-{{- if eq .chezmoi.os "lxplus" }}
+{{- if eq .location "lxplus" }}
   ControlPath /run/user/%i/%r@%h:%p
 {{- else }}
   ControlPath ~/.ssh/%r@%h:%p
@@ -47,7 +47,7 @@ Host delphi
   ForwardAgent yes
   ServerAliveInterval 100
   PubkeyAuthentication no
-{{- if eq .chezmoi.os "lxplus" }}
+{{- if eq .location "lxplus" }}
   ControlPath /run/user/%i/%r@%h:%p
 {{- else	}}
   ControlPath ~/.ssh/%r@%h:%p
