@@ -12,7 +12,11 @@ HISTSIZE=1000
 SAVEHIST=1000
 setopt appendhistory autocd extendedglob nomatch notify
 
-export CDPATH=~/working
+{{ if eq .location "lxplus" }}
+export CDPATH="~/working:/afs/cern.ch/work/${USER:0:1}/${USER}"
+{{ else }}
+export CDPATH="~/working"
+{{ end }}
 
 export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
 eval "$(direnv hook zsh)"

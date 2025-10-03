@@ -22,7 +22,11 @@ shopt -s dirspell
 shopt -s cdspell
 shopt -s direxpand
 
+{{ if eq .location "lxplus" }}
+export CDPATH="~/working:/afs/cern.ch/work/${USER:0:1}/${USER}"
+{{ else }}
 export CDPATH=~/working
+{{ end }}
 
 type direnv > /dev/null 2>&1 
 if [ $? -eq 0 ]; then
