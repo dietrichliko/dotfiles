@@ -9,8 +9,18 @@ set -e
 # This prevents the script from exiting when optional operations fail
 
 # Configuration
-SESSION_KEY="bw_session_${USER}"
 BW_ACCOUNT="Dietrich.Liko@gmail.com"
+
+{{ if eq .chezmoi.os "darwin" }}
+# macOS: use keychain, no session file
+SESSION_KEY="bw_session_${USER}"
+{{ else if eq .location "desktop" "Desktop" }}
+# Desktop GNOME: use secret-tool, no session file
+SESSION_KEY="bw_session_${USER}"
+{{ else }}
+# Server/other: use a per-user session file under /run/user
+SESSION_FILE="/run/user/${UID:-$(id -u)}/bw_session_${USER}"
+{{ end }}
 
 # Retrieve existing session token from keyring/keychain
 {{ if eq .chezmoi.os "darwin" }}
@@ -20,8 +30,13 @@ export BW_SESSION=$(security find-generic-password -a "$USER" -s "$SESSION_KEY" 
 # Desktop Linux: Retrieve from GNOME keyring
 export BW_SESSION=$(secret-tool lookup user "$USER" key "$SESSION_KEY" 2>/dev/null || :)
 {{ else }}
-# Server/other: Retrieve from kernel keyring (with pipe failure protection)
-export BW_SESSION=$(keyctl search @u user "$SESSION_KEY" 2>/dev/null | xargs keyctl read 2>/dev/null || :)
+# Server/other: Retrieve session from the session file (see SESSION_FILE above)
+BW_SESSION=""
+if [ -f "$SESSION_FILE" ]; then
+    # Use the shell builtin 'read' to avoid spawning an external 'cat'.
+    IFS= read -r BW_SESSION < "$SESSION_FILE" 2>/dev/null || :
+fi
+export BW_SESSION
 {{ end }}
 
 # Check if current session is still valid
@@ -56,8 +71,14 @@ security add-generic-password -a "$USER" -s "$SESSION_KEY" -w "$BW_SESSION" -U >
 # Desktop Linux: Use secret-tool (GNOME keyring)
 echo -n "$BW_SESSION" | secret-tool store --label="Bitwarden Session" user "$USER" key "$SESSION_KEY" || :
 {{ else }}
-# Server/other: Use kernel keyring
-echo -n "$BW_SESSION" | keyctl padd user "$SESSION_KEY" @u >/dev/null || :
+# Server/other: Store session in the session file (see SESSION_FILE above).
+# Ensure the file is written with strict permissions. Use umask to prevent
+# other users from seeing the file during creation.
+(
+    umask 077
+    printf '%s' "$BW_SESSION" > "$SESSION_FILE" || :
+)
+chmod 600 "$SESSION_FILE" 2>/dev/null || :
 {{ end }}
 
 
