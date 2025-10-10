@@ -17,4 +17,5 @@ fi
 
 # Run chezmoi with all provided arguments
 # The BW_SESSION environment variable will be available to any chezmoi templates
+
 chezmoi "$@"
