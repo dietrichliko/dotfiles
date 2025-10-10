@@ -33,13 +33,13 @@ Host lxplus lxplus.cern.ch
   ForwardAgent yes
   ServerAliveInterval 100
   PubkeyAuthentication no
-{{- if eq .location "lxplus" }}
+{{- if hasPrefix .chezmoi.homeDir "/afs" }}
   ControlPath /run/user/%i/%r@%h:%p
 {{- else }}
   ControlPath ~/.ssh/%r@%h:%p
 {{- end }}
   ControlMaster auto
-  ControlPersist yes
+  ControlPersist 1h
 
 Host delphi
   Hostname lxplus.cern.ch
@@ -47,13 +47,13 @@ Host delphi
   ForwardAgent yes
   ServerAliveInterval 100
   PubkeyAuthentication no
-{{- if eq .location "lxplus" }}
+{{- if hasPrefix .chezmoi.homeDir "/afs" }}
   ControlPath /run/user/%i/%r@%h:%p
 {{- else	}}
   ControlPath ~/.ssh/%r@%h:%p
 {{- end }}
   ControlMaster	auto
-  ControlPersist yes
+  ControlPersist 1h
 
 Host hepgpu2
   Hostname hepgpu2.hephy.oeaw.ac.at
