@@ -1,55 +1,67 @@
 # Manage the BW_SESSION secret using the keyring
+# Compatible with bash and zsh
+# This script should only be sourced, not executed
 
+# Exit on any error
 set -e
 
-get_secret() {
-{{ if eq .chezmoi.os "Darwin" }}
-  security find-generic-password -a "$USER" -s "$SESSION_KEY" -w 2>/dev/null || true
+# Note: Using '|| :' to catch pipe failures and continue execution
+# This prevents the script from exiting when optional operations fail
+
+# Configuration
+SESSION_KEY="bw_session_${USER}"
+BW_ACCOUNT="Dietrich.Liko@gmail.com"
+
+# Retrieve existing session token from keyring/keychain
+{{ if eq .chezmoi.os "darwin" }}
+# macOS: Retrieve from keychain
+export BW_SESSION=$(security find-generic-password -a "$USER" -s "$SESSION_KEY" -w 2>/dev/null || :)
 {{ else if eq .location "desktop" "Desktop" }}
-  secret-tool lookup user "$USER" key "$SESSION_KEY" 2>/dev/null || true
+# Desktop Linux: Retrieve from GNOME keyring
+export BW_SESSION=$(secret-tool lookup user "$USER" key "$SESSION_KEY" 2>/dev/null || :)
 {{ else }}
-  keyctl search @u user "$SESSION_KEY" 2>/dev/null | xargs keyctl read 2>/dev/null || true
+# Server/other: Retrieve from kernel keyring (with pipe failure protection)
+export BW_SESSION=$(keyctl search @u user "$SESSION_KEY" 2>/dev/null | xargs keyctl read 2>/dev/null || :)
 {{ end }}
-}
 
-store_secret() {
-  token="$1"
-{{ if (eq .chezmoi.os "Darwin") }}
-  security add-generic-password -a "$USER" -s "$SESSION_KEY" -w "$token" -U >/dev/null
+# Check if current session is still valid
+if [ -n "$BW_SESSION" ] && bw unlock --check >/dev/null 2>&1; then
+    # Session is valid
+    return
+fi
+
+# Session is invalid or doesn't exist, need to authenticate
+if bw status | grep -q '"status":"locked"' || :; then
+    # Bitwarden is logged in but locked, just unlock
+    echo "Bitwarden is locked, unlocking..." >&2
+    export BW_SESSION=$(bw unlock --raw || :)
+else
+    # Not logged in, need to login first
+    echo "Logging into Bitwarden..." >&2
+    export BW_SESSION=$(bw login "$BW_ACCOUNT" --method 0 --raw || :)
+fi
+
+# Check if authentication was successful
+if [ -z "$BW_SESSION" ]; then
+    echo "Failed to authenticate with Bitwarden" >&2
+    return 1
+fi
+export BW_SESSION
+
+# Store the new session token for future use
+{{ if (eq .chezmoi.os "darwin") }}
+# macOS: Use keychain
+security add-generic-password -a "$USER" -s "$SESSION_KEY" -w "$BW_SESSION" -U >/dev/null || :
 {{ else if (eq .location "Desktop") }}
-  echo -n "$token" | secret-tool store --label="Bitwarden Session" user "$USER" key "$SESSION_KEY"
+# Desktop Linux: Use secret-tool (GNOME keyring)
+echo -n "$BW_SESSION" | secret-tool store --label="Bitwarden Session" user "$USER" key "$SESSION_KEY" || :
 {{ else }}
-  echo -n "$token" | keyctl padd user "$SESSION_KEY" @u >/dev/null
+# Server/other: Use kernel keyring
+echo -n "$BW_SESSION" | keyctl padd user "$SESSION_KEY" @u >/dev/null || :
 {{ end }}
-}
-
-is_valid() {
-  [ -n "$1" ] && BW_SESSION="$1" bw unlock --check >/dev/null 2>&1
-}
-
-if [[ -v BW_SESSION ]]; then
-   session_token="$(get_secret)"
-else 
-   session_token="$BW_SESSION"
-fi
-
-if is_valid "$session_token"; then
-  export BW_SESSION="$session_token"
-  return
-fi
-
-if ! bw status | grep -q '"loggedIn": true'; then
-  # Login (interactive or via env vars)
-  bw login || exit 1
-fi
 
 
-# Unlock to get new session token
-new_token="$(bw unlock --raw)"
+echo "Bitwarden session established and stored" >&2
 
-# Save new token to keyring
-store_secret "$new_token"
 
-# Export for current shell
-export BW_SESSION="$new_token"
 

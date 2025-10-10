@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# chezmoi-bw: Chezmoi wrapper that ensures Bitwarden session is available
+# This script automatically establishes a Bitwarden session before running chezmoi,
+# enabling chezmoi templates to access Bitwarden secrets via the BW_SESSION variable.
+
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Ensure Bitwarden session is established before running chezmoi
+# Chezmoi templates may need to access Bitwarden secrets via the bw CLI
+if [ -z "${BW_SESSION+x}" ]; then
+    # Load Bitwarden session from keyring or authenticate if needed
+    # shellcheck source=/dev/null
+    source ~/.local/libexec/bw-session.sh
+fi
+
+# Run chezmoi with all provided arguments
+# The BW_SESSION environment variable will be available to any chezmoi templates
+chezmoi "$@"

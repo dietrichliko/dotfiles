@@ -55,6 +55,14 @@ Host delphi
   ControlMaster	auto
   ControlPersist yes
 
+Host hepgpu2
+  Hostname hepgpu2.hephy.oeaw.ac.at
+  User dliko
+  ForwardAgent yes
+    
+
+
+
 {{ if eq .chezmoi.os "darwin" }}
 Host *
   XAuthLocation /opt/local/bin/xauth

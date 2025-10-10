@@ -1,5 +1,25 @@
 #!/bin/bash
 
-env SSH_ASKPASS="$HOME/.local/libexec/bw-ssh_helper.sh" SSH_ASKPASS_REQUIRE="force" ssh "$@"
+# bw-ssh: SSH wrapper that uses Bitwarden for SSH key passphrases
+# This script automatically handles SSH key authentication by using Bitwarden
+# to retrieve SSH key passphrases when needed.
+
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Check if Bitwarden session is already established
+# If BW_SESSION is not set, source the session management script
+if [ -z "${BW_SESSION+x}" ]; then
+    # Load Bitwarden session from keyring or authenticate if needed
+    # shellcheck source=/dev/null
+    source ~/.local/libexec/bw-session.sh
+fi
+
+# Launch SSH with custom askpass helper
+# SSH_ASKPASS: Script to handle passphrase prompts
+# SSH_ASKPASS_REQUIRE=force: Always use the askpass program, even with a TTY
+env SSH_ASKPASS=~/.local/libexec/bw-ssh_helper.sh \
+    SSH_ASKPASS_REQUIRE="force" \
+    ssh "$@"
 
 
