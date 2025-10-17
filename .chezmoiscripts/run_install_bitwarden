@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+# Install or update Bitwarden CLI (bw)
+#
+# Dietrich Liko <Dietrich.Liko@oeaw.ac.at>
+
+set -euo pipefail
+
+BIN_DIR="$HOME/.local/bin"
+mkdir -p "$BIN_DIR"
+
+# --- Version comparison helper ---
+verlte() { printf '%s\n' "$1" "$2" | sort -C -V; }
+
+# --- Detect platform ---
+OS="$(uname -s)"
+case "$OS" in
+  Linux*)  PLATFORM="linux" ;;
+  Darwin*) PLATFORM="macos" ;;
+  *) echo "❌ Unsupported OS: $OS"; exit 1 ;;
+esac
+
+# --- Get latest CLI release tag ---
+TAG=$(curl -s https://api.github.com/repos/bitwarden/clients/releases \
+  | jq -r '.[] | select(.tag_name | startswith("cli-")) | .tag_name' \
+  | sort -Vr | head -n1)
+
+if [[ -z "$TAG" ]]; then
+  echo "❌ Could not find a Bitwarden CLI release"
+  exit 1
+fi
+
+VERSION="${TAG#cli-v}"
+
+# --- Find matching asset ---
+MATCH="bw-${PLATFORM}-[0-9.]+\.zip"
+URL=$(curl -s "https://api.github.com/repos/bitwarden/clients/releases/tags/$TAG" \
+  | jq -r --arg match "$MATCH" '.assets[] | select(.name | test($match)) | .browser_download_url')
+
+if [[ -z "$URL" ]]; then
+  echo "❌ Could not find a matching asset for $PLATFORM"
+  exit 1
+fi
+
+NAME="${URL##*/}"
+LATEST_VERSION=$(echo "$NAME" | grep -oE '[0-9.]+')
+
+# --- Check if bw is already installed ---
+if command -v bw >/dev/null 2>&1; then
+  INSTALLED_PATH="$(command -v bw)"
+  INSTALLED_VERSION="$(bw --version 2>/dev/null || echo 'unknown')"
+  if verlte "$LATEST_VERSION" "$INSTALLED_VERSION"; then
+    echo "✅ Bitwarden CLI is up to date ($INSTALLED_VERSION)"
+    exit 0
+  else
+    echo "⬆️  Update available: $INSTALLED_VERSION → $LATEST_VERSION"
+    exit 0
+    fi
+  fi
+else
+  echo "⬇️  Installing Bitwarden CLI $LATEST_VERSION..."
+fi
+
+# --- Download and install ---
+TMP_DIR=$(mktemp -d)
+(
+  cd "$TMP_DIR"
+  echo "📦 Downloading $NAME..."
+  curl -sL "$URL" -o "$NAME"
+  unzip -q "$NAME"
+
+  # move binary to ~/.local/bin
+  install -m 755 bw "$BIN_DIR/bw"
+)
+rm -rf "$TMP_DIR"
+
+echo "✅ Installed Bitwarden CLI $LATEST_VERSION to $BIN_DIR/bw"
+echo "🔍 Version: $($BIN_DIR/bw --version)"
+
