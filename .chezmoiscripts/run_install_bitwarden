@@ -43,19 +43,40 @@ if [[ -z "$URL" ]]; then
 fi
 
 NAME="${URL##*/}"
-LATEST_VERSION=$(echo "$NAME" | grep -oE '[0-9.]+')
+# --- Extract version cleanly from filename (strip trailing dot if any) ---
+LATEST_VERSION=$(echo "$NAME" | grep -oE '[0-9]+(\.[0-9]+)*' | head -n1)
 
 # --- Check if bw is already installed ---
 if command -v bw >/dev/null 2>&1; then
   INSTALLED_PATH="$(command -v bw)"
-  INSTALLED_VERSION="$(bw --version 2>/dev/null || echo 'unknown')"
-  if verlte "$LATEST_VERSION" "$INSTALLED_VERSION"; then
+  INSTALLED_VERSION="$(bw --version 2>/dev/null | tr -d '\r\n')"
+
+  # Normalize versions (remove any trailing dots)
+  LATEST_VERSION="${LATEST_VERSION%.}"
+  INSTALLED_VERSION="${INSTALLED_VERSION%.}"
+
+  # If installed outside ~/.local/bin → just check version
+  if [[ "$INSTALLED_PATH" != "$BIN_DIR/bw" ]]; then
+    echo "⚠️  Detected Bitwarden CLI installed outside ~/.local/bin"
+    echo "    Path: $INSTALLED_PATH"
+    echo "    Version: $INSTALLED_VERSION"
+    if verlte "$LATEST_VERSION" "$INSTALLED_VERSION"; then
+      echo "✅ System Bitwarden CLI is up to date ($INSTALLED_VERSION)"
+    else
+      echo "⚠️  A newer version is available: $INSTALLED_VERSION → $LATEST_VERSION"
+    fi
+    exit 0
+  fi
+
+  # Otherwise, check local version and update if needed
+  if [[ "$LATEST_VERSION" == "$INSTALLED_VERSION" ]]; then
+    echo "✅ Bitwarden CLI is up to date ($INSTALLED_VERSION)"
+    exit 0
+  elif verlte "$LATEST_VERSION" "$INSTALLED_VERSION"; then
     echo "✅ Bitwarden CLI is up to date ($INSTALLED_VERSION)"
     exit 0
   else
-    echo "⬆️  Update available: $INSTALLED_VERSION → $LATEST_VERSION"
-    exit 0
-    fi
+    echo "⬆️  Updating Bitwarden CLI: $INSTALLED_VERSION → $LATEST_VERSION"
   fi
 else
   echo "⬇️  Installing Bitwarden CLI $LATEST_VERSION..."
