@@ -17,7 +17,7 @@ OS="$(uname -s)"
 case "$OS" in
   Linux*)  PLATFORM="linux" ;;
   Darwin*) PLATFORM="macos" ;;
-  *) echo "❌ Unsupported OS: $OS"; exit 1 ;;
+  *) echo "❗ Unsupported OS: $OS" >&2; exit 1 ;;
 esac
 
 # --- Get latest CLI release tag ---
@@ -26,7 +26,7 @@ TAG=$(curl -s https://api.github.com/repos/bitwarden/clients/releases \
   | sort -Vr | head -n1)
 
 if [[ -z "$TAG" ]]; then
-  echo "❌ Could not find a Bitwarden CLI release"
+  echo "❗ Could not find a Bitwarden CLI release" >&2
   exit 1
 fi
 
@@ -38,7 +38,7 @@ URL=$(curl -s "https://api.github.com/repos/bitwarden/clients/releases/tags/$TAG
   | jq -r --arg match "$MATCH" '.assets[] | select(.name | test($match)) | .browser_download_url')
 
 if [[ -z "$URL" ]]; then
-  echo "❌ Could not find a matching asset for $PLATFORM"
+  echo "❗ Could not find a matching asset for $PLATFORM" >&2
   exit 1
 fi
 
@@ -57,29 +57,27 @@ if command -v bw >/dev/null 2>&1; then
 
   # If installed outside ~/.local/bin → just check version
   if [[ "$INSTALLED_PATH" != "$BIN_DIR/bw" ]]; then
-    echo "⚠️  Detected Bitwarden CLI installed outside ~/.local/bin"
-    echo "    Path: $INSTALLED_PATH"
-    echo "    Version: $INSTALLED_VERSION"
+    echo "✅ Found bw at $INSTALLED_PATH (version $INSTALLED_VERSION). Managed elsewhere — doing nothing."
     if verlte "$LATEST_VERSION" "$INSTALLED_VERSION"; then
       echo "✅ System Bitwarden CLI is up to date ($INSTALLED_VERSION)"
     else
-      echo "⚠️  A newer version is available: $INSTALLED_VERSION → $LATEST_VERSION"
+      echo "❗ Warning: system Bitwarden CLI ($INSTALLED_VERSION) is older than latest ($LATEST_VERSION)." >&2
     fi
     exit 0
   fi
 
   # Otherwise, check local version and update if needed
   if [[ "$LATEST_VERSION" == "$INSTALLED_VERSION" ]]; then
-    echo "✅ Bitwarden CLI is up to date ($INSTALLED_VERSION)"
+    echo "✅ Bitwarden CLI $INSTALLED_VERSION is already up-to-date."
     exit 0
   elif verlte "$LATEST_VERSION" "$INSTALLED_VERSION"; then
-    echo "✅ Bitwarden CLI is up to date ($INSTALLED_VERSION)"
+    echo "✅ Bitwarden CLI $INSTALLED_VERSION is already up-to-date."
     exit 0
   else
-    echo "⬆️  Updating Bitwarden CLI: $INSTALLED_VERSION → $LATEST_VERSION"
+    echo "⬆️ Updating Bitwarden CLI from $INSTALLED_VERSION to $LATEST_VERSION..."
   fi
 else
-  echo "⬇️  Installing Bitwarden CLI $LATEST_VERSION..."
+  echo "⬇️ Installing Bitwarden CLI $LATEST_VERSION..."
 fi
 
 # --- Download and install ---
@@ -95,6 +93,5 @@ TMP_DIR=$(mktemp -d)
 )
 rm -rf "$TMP_DIR"
 
-echo "✅ Installed Bitwarden CLI $LATEST_VERSION to $BIN_DIR/bw"
-echo "🔍 Version: $($BIN_DIR/bw --version)"
+echo "✅ Bitwarden CLI $LATEST_VERSION installed to $BIN_DIR/bw"
 
