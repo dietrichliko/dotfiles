@@ -85,12 +85,10 @@ case "$OS" in
         ;;
 esac
 
-URL="https://github.com/${REPO}/releases/download/${LATEST_VERSION}/${ASSET}"
+URL="https://github.com/${REPO}/releases/download/v${LATEST_VERSION}/${ASSET}"
 
 # --- Create target directory ---
 mkdir -p "$BIN_DIR"
-
-set -x
 
 # --- Download and extract ---
 TMP_DIR=$(mktemp -d)
