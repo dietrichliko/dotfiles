@@ -32,25 +32,23 @@ EXISTING_PATH="$(command -v git-cliff || true)"
 if [[ -n "$EXISTING_PATH" && "$EXISTING_PATH" != "$INSTALL_PATH" ]]; then
     INSTALLED_VERSION="$($EXISTING_PATH --version 2>/dev/null | awk '{print $NF}' || true)"
     echo "✅ Found git-cliff at $EXISTING_PATH (version $INSTALLED_VERSION). Managed elsewhere — doing nothing."
-    if verlte "$LATEST_VERSION" "$INSTALLED_VERSION"; then
-        echo "✅ System git-cliff is up to date ($INSTALLED_VERSION)"
+    if verlte "${LATEST_VERSION#v}" "$INSTALLED_VERSION"; then
+        echo "✅ System git-cliff is up to date (v$INSTALLED_VERSION)"
     else
-        err "Warning: system git-cliff ($INSTALLED_VERSION) is older than latest ($LATEST_VERSION)."
+        err "Warning: system git-cliff (v$INSTALLED_VERSION) is older than latest ($LATEST_VERSION)."
     fi
     exit 0
 fi
 
+set -x
 # --- Check if installed in our path ---
 if [[ -x "$INSTALL_PATH" ]]; then
     CURRENT_VERSION="$("$INSTALL_PATH" --version 2>/dev/null | awk '{print $NF}' || true)"
-    if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
-        echo "✅ git-cliff $CURRENT_VERSION is already up-to-date."
-        exit 0
-    elif verlte "$LATEST_VERSION" "$CURRENT_VERSION"; then
-        echo "✅ git-cliff $CURRENT_VERSION is already up-to-date."
+    if verlte "${LATEST_VERSION#v}" "$CURRENT_VERSION"; then
+        echo "✅ git-cliff v$CURRENT_VERSION is already up-to-date."
         exit 0
     fi
-    echo "⬆️ Updating git-cliff from $CURRENT_VERSION to $LATEST_VERSION..."
+    echo "⬆️ Updating git-cliff from v$CURRENT_VERSION to $LATEST_VERSION..."
 else
     echo "⬇️ Installing git-cliff $LATEST_VERSION..."
 fi
