@@ -96,7 +96,7 @@ TMP_DIR=$(mktemp -d)
     cd "$TMP_DIR"
     echo "📦 Downloading $ASSET..."
     curl -sL "$URL" -o "$ASSET"
-    tar xf "$ASSET"
+    tar zxf "$ASSET"
     BIN_PATH="$(find . -type f -name git-cliff -executable -print -quit)"
     if [[ ! -f "$BIN_PATH" ]]; then
         err "Could not find git-cliff binary in archive."
