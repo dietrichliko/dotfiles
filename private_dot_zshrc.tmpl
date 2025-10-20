@@ -25,9 +25,9 @@ eval "$(starship init zsh)"
 # bitwarden ssh agent
 
 {{ if eq .chezmoi.os "darwin" }}
-export SSH_AUTH_SOCK={{ .chezmoi.homeDir }}/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock
+# export SSH_AUTH_SOCK={{ .chezmoi.homeDir }}/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock
 {{ else if eq .location "desktop" "Desktop" }}
-export SSH_AUTH_SOCK={{ .chezmoi.homeDir }}/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock
+# export SSH_AUTH_SOCK={{ .chezmoi.homeDir }}/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock
 {{ end }}
 
 {{ if .conda }}

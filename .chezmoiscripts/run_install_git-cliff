@@ -55,32 +55,32 @@ else
     echo "⬇️ Installing git-cliff $LATEST_VERSION..."
 fi
 
-# --- Detect libc ---
-LIBC="gnu"
-GLIBC_VERSION=""
-if ldd --version 2>&1 | grep -q musl; then
-    LIBC="musl"
-else
-    GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
-fi
-
 # --- Decide which binary to download ---
 MIN_GLIBC_VERSION="2.34"
 USE_MUSL=false
-if [[ "$OS" == "linux" ]]; then
-    if [[ "$LIBC" == "musl" ]]; then
-        USE_MUSL=true
-    elif [[ -n "$GLIBC_VERSION" ]]; then
-        if [[ "$(printf '%s\n' "$MIN_GLIBC_VERSION" "$GLIBC_VERSION" | sort -V | head -n1)" != "$MIN_GLIBC_VERSION" ]]; then
-            USE_MUSL=true
-        fi
-    else
-        USE_MUSL=true
-    fi
-fi
 
 case "$OS" in
     linux)
+        # --- Detect libc on Linux only ---
+        LIBC="gnu"
+        GLIBC_VERSION=""
+        if ldd --version 2>&1 | grep -q musl; then
+            LIBC="musl"
+        else
+            GLIBC_VERSION=$(ldd --version | awk 'NR==1 {print $NF}')
+        fi
+
+        # Decide whether to use musl build
+        if [[ "$LIBC" == "musl" ]]; then
+            USE_MUSL=true
+        elif [[ -n "$GLIBC_VERSION" ]]; then
+            if [[ "$(printf '%s\n' "$MIN_GLIBC_VERSION" "$GLIBC_VERSION" | sort -V | head -n1)" != "$MIN_GLIBC_VERSION" ]]; then
+                USE_MUSL=true
+            fi
+        else
+            USE_MUSL=true
+        fi
+
         if $USE_MUSL; then
             ASSET="git-cliff-${LATEST_VERSION#v}-${ARCH}-unknown-linux-musl.tar.gz"
             echo "ℹ️ Using musl build (glibc too old or musl detected)."
@@ -91,103 +91,6 @@ case "$OS" in
         ;;
     darwin)
         ASSET="git-cliff-${LATEST_VERSION#v}-${ARCH}-apple-darwin.tar.gz"
-        ;;
-    *)
-        err "Unsupported OS: $OS"
-        exit 1
-        ;;
-esac
-
-URL="https://github.com/${REPO}/releases/download/${LATEST_VERSION}/${ASSET}"
-
-# --- Create target directory ---
-mkdir -p "$BIN_DIR"
-
-err() { echo "❗ $*" >&2; }
-
-# --- Version comparison helper ---
-verlte() { printf '%s\n' "$1" "$2" | sort -C -V; }
-
-# --- Detect OS and architecture ---
-OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
-ARCH="$(uname -m)"
-case "$ARCH" in
-  x86_64) ARCH="x86_64" ;;
-  aarch64|arm64) ARCH="aarch64" ;;
-  *) err "Unsupported architecture: $ARCH"; exit 1 ;;
-esac
-
-# --- Get latest release ---
-LATEST_VERSION=$(curl -s https://api.github.com/repos/$REPO/releases/latest | jq -r .tag_name)
-if [[ -z "$LATEST_VERSION" || "$LATEST_VERSION" == "null" ]]; then
-    err "Failed to get latest git-cliff version."
-    exit 1
-fi
-
-# --- Check if git-cliff exists elsewhere ---
-EXISTING_PATH="$(command -v git-cliff || true)"
-if [[ -n "$EXISTING_PATH" && "$EXISTING_PATH" != "$INSTALL_PATH" ]]; then
-    INSTALLED_VERSION="$($EXISTING_PATH --version 2>/dev/null | awk '{print $NF}' || true)"
-    echo "✅ Found git-cliff at $EXISTING_PATH (version $INSTALLED_VERSION). Managed elsewhere — doing nothing."
-    if verlte "$LATEST_VERSION" "$INSTALLED_VERSION"; then
-        echo "✅ System git-cliff is up to date ($INSTALLED_VERSION)"
-    else
-        err "Warning: system git-cliff ($INSTALLED_VERSION) is older than latest ($LATEST_VERSION)."
-    fi
-    exit 0
-fi
-
-# --- Check if installed in our path ---
-if [[ -x "$INSTALL_PATH" ]]; then
-    CURRENT_VERSION="$("$INSTALL_PATH" --version 2>/dev/null | awk '{print $NF}' || true)"
-    if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
-        echo "✅ git-cliff $CURRENT_VERSION is already up-to-date."
-        exit 0
-    elif verlte "$LATEST_VERSION" "$CURRENT_VERSION"; then
-        echo "✅ git-cliff $CURRENT_VERSION is already up-to-date."
-        exit 0
-    fi
-    echo "⬆️ Updating git-cliff from $CURRENT_VERSION to $LATEST_VERSION..."
-else
-    echo "⬇️ Installing git-cliff $LATEST_VERSION..."
-fi
-
-# --- Detect libc ---
-LIBC="gnu"
-GLIBC_VERSION=""
-if ldd --version 2>&1 | grep -q musl; then
-    LIBC="musl"
-else
-    GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
-fi
-
-# --- Decide which binary to download ---
-MIN_GLIBC_VERSION="2.34"
-USE_MUSL=false
-if [[ "$OS" == "linux" ]]; then
-    if [[ "$LIBC" == "musl" ]]; then
-        USE_MUSL=true
-    elif [[ -n "$GLIBC_VERSION" ]]; then
-        if [[ "$(printf '%s\n' "$MIN_GLIBC_VERSION" "$GLIBC_VERSION" | sort -V | head -n1)" != "$MIN_GLIBC_VERSION" ]]; then
-            USE_MUSL=true
-        fi
-    else
-        USE_MUSL=true
-    fi
-fi
-
-case "$OS" in
-    linux)
-        if $USE_MUSL; then
-            ASSET="git-cliff-${VERSION_NO_V}-${ARCH}-unknown-linux-musl.tar.gz"
-            echo "ℹ️ Using musl build (glibc too old or musl detected)."
-        else
-            ASSET="git-cliff-${VERSION_NO_V}-${ARCH}-unknown-linux-gnu.tar.gz"
-            echo "ℹ️ Using glibc build (version $GLIBC_VERSION)."
-        fi
-        ;;
-    darwin)
-        ASSET="git-cliff-${VERSION_NO_V}-${ARCH}-apple-darwin.tar.gz"
         ;;
     *)
         err "Unsupported OS: $OS"
