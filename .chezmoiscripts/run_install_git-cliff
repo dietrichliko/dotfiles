@@ -56,37 +56,26 @@ else
 fi
 
 # --- Decide which binary to download ---
-MIN_GLIBC_VERSION="2.34"
-USE_MUSL=false
+
 
 case "$OS" in
     linux)
-        # --- Detect libc on Linux only ---
-        LIBC="gnu"
-        GLIBC_VERSION=""
-        if ldd --version 2>&1 | grep -q musl; then
-            LIBC="musl"
+        # Choose musl build when musl is detected or glibc is older than MIN_GLIBC_VERSION.
+        MIN_GLIBC_VERSION="2.34"
+        GLIBC_VERSION=$(ldd --version 2>&1 | awk 'NR==1{print $NF}' 2>/dev/null || true)
+        if ldd --version 2>&1 | grep -qi musl; then
+            MUSL_DETECTED=true
         else
-            GLIBC_VERSION=$(ldd --version | awk 'NR==1 {print $NF}')
+            MUSL_DETECTED=false
         fi
 
-        # Decide whether to use musl build
-        if [[ "$LIBC" == "musl" ]]; then
-            USE_MUSL=true
-        elif [[ -n "$GLIBC_VERSION" ]]; then
-            if [[ "$(printf '%s\n' "$MIN_GLIBC_VERSION" "$GLIBC_VERSION" | sort -V | head -n1)" != "$MIN_GLIBC_VERSION" ]]; then
-                USE_MUSL=true
-            fi
-        else
-            USE_MUSL=true
-        fi
-
-        if $USE_MUSL; then
+        # Use musl when musl is detected, glibc is missing, or glibc < MIN_GLIBC_VERSION
+        if $MUSL_DETECTED || [[ -z "$GLIBC_VERSION" ]] || ! verlte "$MIN_GLIBC_VERSION" "$GLIBC_VERSION"; then
             ASSET="git-cliff-${LATEST_VERSION#v}-${ARCH}-unknown-linux-musl.tar.gz"
-            echo "ℹ️ Using musl build (glibc too old or musl detected)."
+            echo "ℹ️ Using musl build (musl detected or glibc < $MIN_GLIBC_VERSION)."
         else
             ASSET="git-cliff-${LATEST_VERSION#v}-${ARCH}-unknown-linux-gnu.tar.gz"
-            echo "ℹ️ Using glibc build (version $GLIBC_VERSION)."
+            echo "ℹ️ Using glibc build (glibc $GLIBC_VERSION)."
         fi
         ;;
     darwin)
@@ -110,7 +99,7 @@ TMP_DIR=$(mktemp -d)
     echo "📦 Downloading $ASSET..."
     curl -sL "$URL" -o "$ASSET"
     tar xf "$ASSET"
-    BIN_PATH="$(find . -type f -name git-cliff -perm +111 | head -n1)"
+    BIN_PATH="$(find . -type f -name git-cliff -executable -print -quit)"
     if [[ ! -f "$BIN_PATH" ]]; then
         err "Could not find git-cliff binary in archive."
         exit 1
