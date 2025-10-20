@@ -40,7 +40,6 @@ if [[ -n "$EXISTING_PATH" && "$EXISTING_PATH" != "$INSTALL_PATH" ]]; then
     exit 0
 fi
 
-set -x
 # --- Check if installed in our path ---
 if [[ -x "$INSTALL_PATH" ]]; then
     CURRENT_VERSION="$("$INSTALL_PATH" --version 2>/dev/null | awk '{print $NF}' || true)"
