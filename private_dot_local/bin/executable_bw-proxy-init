@@ -4,7 +4,16 @@
 #
 # Dietrich Liko, Feb 2025
 
-set -e
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Check if Bitwarden session is already established
+# If BW_SESSION is not set, source the session management script
+if [ -z "${BW_SESSION+x}" ]; then
+    # Load Bitwarden session from keyring or authenticate if needed
+    # shellcheck source=/dev/null
+    source ~/.local/libexec/bw-session.sh
+fi
 
 ID="1c0496b8-5c8c-4e45-96d8-acd4010eb4d7"
 VOMS_OPTIONS="--voms cms --rfc --valid 192:0"

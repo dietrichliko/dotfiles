@@ -4,9 +4,9 @@
 # Verify usercert.pem and userkey.pem for Grid usage
 # ----------------------------------------------------------
 
-CERT=${1:-$HOME/.globus/usercert.pem}
-KEY=${2:-$HOME/.globus/userkey.pem}
-CA_PATH=${CA_PATH:-/etc/grid-security/certificates}
+CERT=${X509_USER_CERT:-$HOME/.globus/usercert.pem}
+KEY=${X509_USER_KEY:-$HOME/.globus/userkey.pem}
+CA_PATH=${X509_CERT_DIR:-/etc/grid-security/certificates}
 
 # Colors
 RED='\033[0;31m'
