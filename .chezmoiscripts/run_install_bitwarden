@@ -64,7 +64,7 @@ if command -v bw >/dev/null 2>&1; then
   INSTALLED_VERSION="${INSTALLED_VERSION%.}"
 
   # If installed outside ~/.local/bin → just check version
-  if [[ "$INSTALLED_PATH" != "$BIN_DIR/bw" -or "$IS_EL7" -eq 1 ]]; then
+  if [[ "$INSTALLED_PATH" != "$BIN_DIR/bw" || $IS_EL7 -eq 1 ]]; then
     echo "✅ Found bw at $INSTALLED_PATH (version $INSTALLED_VERSION). Managed elsewhere — doing nothing."
     if verlte "$LATEST_VERSION" "$INSTALLED_VERSION"; then
       echo "✅ System Bitwarden CLI is up to date ($INSTALLED_VERSION)"
