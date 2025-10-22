@@ -39,12 +39,27 @@ if [ $? -eq 0 ]; then
 fi
 
 {{ if .conda }}
-# setup conda & mamba
-if [ -f "{{ .conda }}/etc/profile.d/conda.sh" ]; then
-    source "{{ .conda }}/etc/profile.d/conda.sh"
+__conda_setup="$('{{ .conda }}/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "{{ .conda }}/etc/profile.d/conda.sh" ]; then
+        . "{{ .conda }}/etc/profile.d/conda.sh"
+    else
+        export PATH="{{ .conda }}/bin:$PATH"
+    fi
 fi
-if [ -f "{{ .conda }}/etc/profile.d/mamba.sh" ]; then
-    source "{{ .conda }}/etc/profile.d/mamba.sh"
+unset __conda_setup
+
+export MAMBA_EXE='{{ .conda }}/bin/mamba';
+export MAMBA_ROOT_PREFIX='{{ .conda }}';
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__mamba_setup"
+else
+    alias mamba="$MAMBA_EXE"  # Fallback on help from mamba activate
 fi
+unset __mamba_setup
+
 {{ end }}
 

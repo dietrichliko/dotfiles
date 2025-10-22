@@ -3,9 +3,9 @@
     location = "lxplus"
     conda = ""
     cvmfs = true
-{{ else if regexMatch "*.cbe.vbc.ac.at" .chezmoi.fqdnHostname }}
+{{ else if regexMatch ".*\\.cbe\\.vbc\\.ac\\.at" .chezmoi.fqdnHostname }}
     location = "clip"
-    conda = "/software/f2022/software/mamba/24.3.0-0"
+    conda = "/groups/hephy/cms/dietrich.liko/miniforge3"
     cvmfs = true
 {{ else }}
     location = "desktop"

@@ -51,12 +51,20 @@ if command -v bw >/dev/null 2>&1; then
   INSTALLED_PATH="$(command -v bw)"
   INSTALLED_VERSION="$(bw --version 2>/dev/null | tr -d '\r\n')"
 
+  # --- Detect EL7 (RHEL/CentOS/Oracle/AMZN Linux 7) ---
+  IS_EL7=0
+  if [[ -r /etc/redhat-release ]]; then
+    if grep -qE 'release[[:space:]]+7' /etc/redhat-release; then
+      IS_EL7=1
+    fi
+  fi
+
   # Normalize versions (remove any trailing dots)
   LATEST_VERSION="${LATEST_VERSION%.}"
   INSTALLED_VERSION="${INSTALLED_VERSION%.}"
 
   # If installed outside ~/.local/bin → just check version
-  if [[ "$INSTALLED_PATH" != "$BIN_DIR/bw" ]]; then
+  if [[ "$INSTALLED_PATH" != "$BIN_DIR/bw" -or "$IS_EL7" -eq 1 ]]; then
     echo "✅ Found bw at $INSTALLED_PATH (version $INSTALLED_VERSION). Managed elsewhere — doing nothing."
     if verlte "$LATEST_VERSION" "$INSTALLED_VERSION"; then
       echo "✅ System Bitwarden CLI is up to date ($INSTALLED_VERSION)"
