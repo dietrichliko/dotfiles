@@ -1,12 +1,16 @@
 # .bash_profile
 
+{{ if eg .location "clip" }}
+ml add build-env/f2022 git/2.42.0-gcccore-13.2.0 &>/dev/null
+{{ end }}
+
 {{ if eq .chezmoi.os "darwin" }}
 export PATH="$HOME/.local/bin:/opt/local/bin:/opt/local/sbin:$PATH"
 {{ else }}
 export PATH="$HOME/.local/bin:$PATH"
 {{ end }}
 
-{{ if hasPrefix "/afs" .chezmoi.homeDir }}
+{{ if .location "lxplus" }}
 if command -v krenew >/dev/null; then
   # Only start one krenew per user
   if ! pgrep -u "$USER" krenew >/dev/null; then
