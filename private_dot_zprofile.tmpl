@@ -5,3 +5,14 @@ export PATH="$HOME/.local/bin:/opt/local/bin:/opt/local/sbin:$PATH"
 {{ else }}
 export PATH="$HOME/.local/bin:$PATH"
 {{ end }}
+
+{{ if hasPrefix "/afs" .chezmoi.homeDir }}
+if command -v krenew >/dev/null; then
+  # Only start one krenew per user
+  if ! pgrep -u "$USER" krenew >/dev/null; then
+    echo "$(date): Starting krenew in background" >> "$HOME/.krenew_$(date +%F).log"
+    krenew -b -K 30 -t -l "$HOME/.krenew_$(date +%F).log"
+  fi
+  ls -1t "$HOME"/.krenew_*.log 2>/dev/null | tail -n +8 | xargs -r rm --
+fi
+{{ end }}
