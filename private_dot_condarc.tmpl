@@ -5,4 +5,10 @@ envs_dirs:
 
 pkgs_dirs:
   - /groups/hephy/cms/dietrich.liko/conda/pkgs
+{{ else if eq .location "lxplus" }}
+envs_dirs:
+  - /afs/cern.ch/work/{{ substr 0 1 .chezmoi.username }}/{{ .chezmoi.username }}/conda/envs
+
+pkgs_dirs:
+  - /afs/cern.ch/work/{{ substr 0 1 .chezmoi.username }}/{{ .chezmoi.username }}/conda/pkgs
 {{ end }}
