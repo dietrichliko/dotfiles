@@ -28,15 +28,14 @@ export CDPATH="~/working:/afs/cern.ch/work/${USER:0:1}/${USER}"
 export CDPATH=~/working
 {{ end }}
 
-type direnv > /dev/null 2>&1 
-if [ $? -eq 0 ]; then
-    export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
-    eval "$(direnv hook bash)"
-fi
-type starship > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-    eval "$(starship init bash)"
-fi
+# various shell tools
+
+source ~/.iterm2_shell_integration.zsh
+export ITERM2_SQUELCH_MARK=1
+
+export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
+eval "$(direnv hook bash)"
+eval "$(starship init bash)"
 
 {{ if .conda }}
 __conda_setup="$('{{ .conda }}/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"

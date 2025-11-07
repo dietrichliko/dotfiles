@@ -18,11 +18,15 @@ export CDPATH="~/working:/afs/cern.ch/work/${USER:0:1}/${USER}"
 export CDPATH="~/working"
 {{ end }}
 
+# various shell tools
+
+source ~/.iterm2_shell_integration.zsh
+export ITERM2_SQUELCH_MARK=1
+
 export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
 eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"
 
-# bitwarden ssh agent
 
 {{ if eq .chezmoi.os "darwin" }}
 # export SSH_AUTH_SOCK={{ .chezmoi.homeDir }}/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock
@@ -40,4 +44,3 @@ if [ -f "{{ .conda }}/etc/profile.d/mamba.sh" ]; then
 fi
 {{ end }}
 
-source ~/.iterm2_shell_integration.zsh
