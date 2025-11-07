@@ -1,4 +1,10 @@
 {{ if eq .location "clip" "lxplus" }}
+[".local/bin/fzf"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "junegunn/fzf" (printf "fzf-%s-linux_%s.tar.gz" ((gitHubLatestTag "junegunn/fzf").Name | trimPrefix "v") .chezmoi.arch) | quote }}
+   path = "fzf"
+   executable = true
+   refreshPeriod = "168h"
 [".local/bin/direnv"]
    type = "file"
    url = {{ gitHubLatestReleaseAssetURL "direnv/direnv" (printf "direnv.%s-%s" .chezmoi.os .chezmoi.arch) | quote }}
