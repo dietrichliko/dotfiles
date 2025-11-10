@@ -29,10 +29,13 @@
    path = "fzf"
    executable = true
    refreshPeriod = "168h"
+https://github.com/cli/cli/releases/download/v2.83.0/gh_2.83.0_linux_amd64.tar.gz
+
+{{- $gh_tag := (gitHubLatestTag "docker/compose").Name -}}
 
 [".local/bin/gh"]
    type = "archive"
-   url = {{ gitHubLatestReleaseAssetURL "cli/cli" (printf "gh_%s_%s.tar.gz" .chezmoi.os .chezmoi.arch) | quote }}
+   url = {{ gitHubLatestReleaseAssetURL "cli/cli" (printf "gh_%s_%s_%s.tar.gz" (slice $gh_tag 1)  .chezmoi.os .chezmoi.arch) | quote }}
    exact = true
    stripComponents = 1
    exclude = "LICENSE"
