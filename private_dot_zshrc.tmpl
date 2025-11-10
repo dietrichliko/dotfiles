@@ -3,44 +3,91 @@
 
 autoload -U compinit; compinit
 
-fpath=(~/.zfunc $fpath);
-autoload -U $fpath[1]/*(.:t)
+fpath=(~/.zfunc $fpath)
+# Autoload all functions from the first entry in $fpath (ignore if none match)
+for _func in $fpath[1]/*(N:t); autoload -U $_func; done
 
 
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
-setopt appendhistory autocd extendedglob nomatch notify
+setopt appendhistory autocd extendedglob nomatch notify histignorealldups sharehistory
 
+typeset -U cdpath
 {{ if eq .location "lxplus" }}
-export CDPATH="~/working:/afs/cern.ch/work/${USER:0:1}/${USER}"
+cdpath=( ~/working /afs/cern.ch/work/${USER[1]}/$USER )
 {{ else }}
-export CDPATH="~/working"
+cdpath=( ~/working )
 {{ end }}
 
 # various shell tools
 
-source ~/.iterm2_shell_integration.zsh
-export ITERM2_SQUELCH_MARK=1
+# iTerm2 shell integration (guard so other terminals don't error)
+if [[ -n $ITERM_SESSION_ID && -r ~/.iterm2_shell_integration.zsh ]]; then
+    source ~/.iterm2_shell_integration.zsh
+    export ITERM2_SQUELCH_MARK=1
+fi
 
-export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
-eval "$(direnv hook zsh)"
-eval "$(starship init zsh)"
+# direnv (guard if not installed)
+if command -v direnv >/dev/null 2>&1; then
+    export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
+    eval "$(direnv hook zsh)"
+fi
+
+# starship (guard if not installed)
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init zsh)"
+fi
+
+
+# fzf integration (load after prompt)
+if command -v fzf >/dev/null 2>&1; then
+    # User-level fzf config (installed by the fzf installer)
+    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+    # Try to derive prefix from the fzf binary path (works for Homebrew, MacPorts, etc.)
+    _fzf_bin=$(command -v fzf)
+    _fzf_prefix=${_fzf_bin:h:h}
+    _fzf_sourced=""
+    if [ -r "$_fzf_prefix/share/fzf/shell/completion.zsh" ]; then
+        source "$_fzf_prefix/share/fzf/shell/completion.zsh"
+        [ -r "$_fzf_prefix/share/fzf/shell/key-bindings.zsh" ] && source "$_fzf_prefix/share/fzf/shell/key-bindings.zsh"
+        _fzf_sourced=1
+    fi
+
+    # Fallbacks: MacPorts packaged locations
+    if [ -z "$_fzf_sourced" ]; then
+        if [ -r /opt/local/share/fzf/shell/completion.zsh ]; then
+            source /opt/local/share/fzf/shell/completion.zsh
+            source /opt/local/share/fzf/shell/key-bindings.zsh
+        elif [ -r /opt/local/etc/profile.d/fzf.zsh ]; then
+            source /opt/local/etc/profile.d/fzf.zsh
+        fi
+    fi
+
+    # Prefer fd for faster indexing when available
+    if command -v fd >/dev/null 2>&1; then
+        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    fi
+fi
 
 
 {{ if eq .chezmoi.os "darwin" }}
 # export SSH_AUTH_SOCK={{ .chezmoi.homeDir }}/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock
-{{ else if eq .location "desktop" "Desktop" }}
+{{ else if or (eq .location "desktop") (eq .location "Desktop") }}
 # export SSH_AUTH_SOCK={{ .chezmoi.homeDir }}/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock
 {{ end }}
 
 {{ if .conda }}
-# setup conda & mamba
-if [ -f "{{ .conda }}/etc/profile.d/conda.sh" ]; then
-    source "{{ .conda }}/etc/profile.d/conda.sh"
-fi
-if [ -f "{{ .conda }}/etc/profile.d/mamba.sh" ]; then
-    source "{{ .conda }}/etc/profile.d/mamba.sh"
+# setup conda & mamba (interactive shells only)
+if [[ -o interactive ]]; then
+    if [ -r "{{ .conda }}/etc/profile.d/conda.sh" ]; then
+        source "{{ .conda }}/etc/profile.d/conda.sh"
+    fi
+    if [ -r "{{ .conda }}/etc/profile.d/mamba.sh" ]; then
+        source "{{ .conda }}/etc/profile.d/mamba.sh"
+    fi
 fi
 {{ end }}
 

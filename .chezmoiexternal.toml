@@ -15,4 +15,26 @@
    path = "starship"
    executable = true
    refreshPeriod = "168h"
+
+[".local/bin/git-cliff"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "orhun/git-cliff" (printf "git-cliff-%s-%s.tar.gz" .chezmoi.os .chezmoi.arch) | quote }}
+   path = "git-cliff"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/fzf"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "junegunn/fzf" (printf "fzf-%s_%s.tar.gz" .chezmoi.os .chezmoi.arch) | quote }}
+   path = "fzf"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/gh"]
+   type = "archive"
+   url = {{ gitHubLatestReleaseAssetURL "cli/cli" (printf "gh_%s_%s.tar.gz" .chezmoi.os .chezmoi.arch) | quote }}
+   exact = true
+   stripComponents = 1
+   exclude = "LICENSE"
+   refreshPeriod = "168h"
 {{ end }}
