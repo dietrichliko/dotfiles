@@ -5,7 +5,7 @@ autoload -U compinit; compinit
 
 fpath=(~/.zfunc $fpath)
 # Autoload all functions from the first entry in $fpath (ignore if none match)
-for _func in $fpath[1]/*(N:t); autoload -U $_func; done
+for _func in $fpath[1]/*(N:t); do autoload -U $_func; done
 
 
 HISTFILE=~/.histfile

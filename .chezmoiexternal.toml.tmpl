@@ -5,6 +5,7 @@
    path = "fzf"
    executable = true
    refreshPeriod = "168h"
+
 [".local/bin/direnv"]
    type = "file"
    url = {{ gitHubLatestReleaseAssetURL "direnv/direnv" (printf "direnv.%s-%s" .chezmoi.os .chezmoi.arch) | quote }}
@@ -22,28 +23,20 @@
    executable = true
    refreshPeriod = "168h"
 
-[".local/bin/git-cliff"]
-   type = "archive-file"
-   url = {{ gitHubLatestReleaseAssetURL "orhun/git-cliff" (printf "git-cliff-%s-%s.tar.gz" .chezmoi.os .chezmoi.arch) | quote }}
-   path = "git-cliff"
-   executable = true
-   refreshPeriod = "168h"
+#[".local/bin/git-cliff"]
+#   type = "archive-file"
+#   url = {{ gitHubLatestReleaseAssetURL "orhun/git-cliff" (printf "git-cliff-%s-%s.tar.gz" .chezmoi.os .chezmoi.arch) | quote }}
+#   path = "git-cliff"
+#   executable = true
+#   refreshPeriod = "168h"
 
-[".local/bin/fzf"]
-   type = "archive-file"
-   url = {{ gitHubLatestReleaseAssetURL "junegunn/fzf" (printf "fzf-%s_%s.tar.gz" .chezmoi.os .chezmoi.arch) | quote }}
-   path = "fzf"
-   executable = true
-   refreshPeriod = "168h"
-https://github.com/cli/cli/releases/download/v2.83.0/gh_2.83.0_linux_amd64.tar.gz
+{{- $gh_version := trimPrefix "v" (gitHubLatestTag "cli/cli").Name  -}}
 
-{{- $gh_version := slice (printf "%s" ((gitHubLatestTag "docker/compose").Name)) 1 -}}
-
-[".local/bin/gh"]
-   type = "archive"
-   url = {{ gitHubLatestReleaseAssetURL "cli/cli" (printf "gh_%s_%s_%s.tar.gz" $gh_tag .chezmoi.os .chezmoi.arch) | quote }}
-   exact = true
-   stripComponents = 1
-   exclude = "LICENSE"
-   refreshPeriod = "168h"
+#[".local/bin/gh"]
+#   type = "archive"
+#   url = {{ gitHubLatestReleaseAssetURL "cli/cli" (printf "gh_%s_%s_%s.tar.gz" $gh_version .chezmoi.os .chezmoi.arch) | quote }}
+#   exact = true
+#   stripComponents = 1
+#   exclude = ["LICENSE"]
+#   refreshPeriod = "168h"
 {{ end }}
