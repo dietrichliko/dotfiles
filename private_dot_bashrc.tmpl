@@ -30,7 +30,6 @@ export CDPATH="~/working:/afs/cern.ch/work/${USER:0:1}/${USER}"
 export CDPATH=~/working
 {{ end }}
 
-
 # iTerm2 shell integration (guard so other terminals don't error)
 if [[ -n "$ITERM_SESSION_ID" && -r ~/.iterm2_shell_integration.bash ]]; then
     source ~/.iterm2_shell_integration.bash
@@ -91,5 +90,4 @@ if [[ $- == *i* ]]; then
     fi
 fi
 {{ end }}
-
 
