@@ -26,6 +26,10 @@ Host lxplus lxplus.cern.ch
   ForwardAgent yes
   ServerAliveInterval 100
   PubkeyAuthentication no
+  GSSAPIAuthentication no
+  HostbasedAuthentication no
+  PasswordAuthentication no 
+  KbdInteractiveAuthentication yes
 {{- if hasPrefix .chezmoi.homeDir "/afs" }}
   ControlPath /run/user/%i/%r@%h:%p
 {{- else }}
@@ -40,6 +44,10 @@ Host delphi
   ForwardAgent yes
   ServerAliveInterval 100
   PubkeyAuthentication no
+  GSSAPIAuthentication no
+  HostbasedAuthentication no
+  PasswordAuthentication no 
+  KbdInteractiveAuthentication yes
 {{- if hasPrefix .chezmoi.homeDir "/afs" }}
   ControlPath /run/user/%i/%r@%h:%p
 {{- else	}}

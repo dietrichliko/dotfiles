@@ -20,17 +20,7 @@ cdpath=( ~/working /afs/cern.ch/work/${USER[1]}/$USER )
 cdpath=( ~/working )
 {{ end }}
 
-<<<<<<< Updated upstream
 # various shell tools
-=======
-
-source ~/.iterm2_shell_integration.zsh
-export ITERM2_SQUELCH_MARK
-
-export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
-eval "$(direnv hook zsh)"
-eval "$(starship init zsh)"
->>>>>>> Stashed changes
 
 # iTerm2 shell integration (guard so other terminals don't error)
 if [[ -n $ITERM_SESSION_ID && -r ~/.iterm2_shell_integration.zsh ]]; then
