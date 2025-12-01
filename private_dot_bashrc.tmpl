@@ -36,6 +36,11 @@ if [[ -n "$ITERM_SESSION_ID" && -r ~/.iterm2_shell_integration.bash ]]; then
     export ITERM2_SQUELCH_MARK=1
 fi
 
+# VS Code Shell Integration
+if [[ "$TERM_PROGRAM" == "vscode" ]]; then
+    . "$(code --locate-shell-integration-path bash)"
+fi
+
 # direnv (guard if not installed)
 if command -v direnv >/dev/null 2>&1; then
     export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'

@@ -24,8 +24,13 @@ cdpath=( ~/working )
 
 # iTerm2 shell integration (guard so other terminals don't error)
 if [[ -n $ITERM_SESSION_ID && -r ~/.iterm2_shell_integration.zsh ]]; then
-    source ~/.iterm2_shell_integration.zsh
+    . ~/.iterm2_shell_integration.zsh
     export ITERM2_SQUELCH_MARK=1
+fi
+
+# VS Code Shell Integration
+if [[ "$TERM_PROGRAM" == "vscode" ]]; then
+    . "$(code --locate-shell-integration-path zsh)"
 fi
 
 # direnv (guard if not installed)
