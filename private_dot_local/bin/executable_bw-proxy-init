@@ -27,5 +27,5 @@ rm "$PIPE"
 bw --nointeraction get item "$ID" | jq -r '.fields[] | select(.name="passphrase") | .value' >&4
 echo >&4
 
-voms-proxy-init --pwstdin $VOMS_OPTIONS <&4
+voms-proxy-init --quiet --pwstdin $VOMS_OPTIONS <&4
 
