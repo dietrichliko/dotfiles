@@ -1,0 +1,29 @@
+#!/bin/sh
+LOGDIR="$HOME"
+LOGFILE="$LOGDIR/.krenew_$(date +%F).log"
+
+echo "$(date): SSH connection started" >> "$LOGFILE"
+
+# Check for krenew
+if ! command -v krenew >/dev/null 2>&1; then
+    echo "$(date): krenew not found, skipping" >> "$LOGFILE"
+    exit 0
+fi
+
+# Start only one krenew
+if ! pgrep -u "$USER" -x krenew >/dev/null 2>&1; then
+    echo "$(date): Starting krenew" >> "$LOGFILE"
+
+    # Check if ticket is renewable
+    if ! klist -f 2>/dev/null | grep -q "R"; then
+        echo "$(date): Warning: Ticket not renewable" >> "$LOGFILE"
+    fi
+
+    krenew -b -K 30 -t >> "$LOGFILE" 2>&1 &
+fi
+
+# Keep only 7 logs
+ls -1t "$LOGDIR"/.krenew_*.log 2>/dev/null | tail -n +8 | xargs -r rm --
+
+exit 0
+

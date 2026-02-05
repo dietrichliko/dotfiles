@@ -26,6 +26,7 @@ shopt -s direxpand
 
 {{ if eq .location "lxplus" }}
 export CDPATH="~/working:/afs/cern.ch/work/${USER:0:1}/${USER}"
+export UV_LINK_MODE=copy
 {{ else }}
 export CDPATH=~/working
 {{ end }}
