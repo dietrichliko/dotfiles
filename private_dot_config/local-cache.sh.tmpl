@@ -1,0 +1,28 @@
+{{ if hasPrefix "/afs" .chezmoi.homeDir }}
+# CERN / AFS local cache setup
+
+export XDG_CACHE_HOME="/tmp/$USER-cache"
+export XDG_STATE_HOME="/tmp/$USER-state"
+export XDG_RUNTIME_DIR="/tmp/$USER-runtime"
+
+mkdir -p "$XDG_CACHE_HOME" "$XDG_STATE_HOME" "$XDG_RUNTIME_DIR"
+
+# Starship
+export STARSHIP_CACHE="$XDG_CACHE_HOME/starship"
+
+# Python / uv
+export PIP_CACHE_DIR="$XDG_CACHE_HOME/pip"
+export PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/pycache"
+export UV_CACHE_DIR="$XDG_CACHE_HOME/uv"
+
+# Node
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+
+# Rust
+export CARGO_HOME="$XDG_CACHE_HOME/cargo"
+
+# Go
+export GOCACHE="$XDG_CACHE_HOME/go/build"
+export GOMODCACHE="$XDG_CACHE_HOME/go/pkg/mod"
+{{ end }}
+

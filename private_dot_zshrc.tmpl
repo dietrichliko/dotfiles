@@ -13,18 +13,27 @@ HISTSIZE=1000
 SAVEHIST=1000
 setopt appendhistory autocd extendedglob nomatch notify histignorealldups sharehistory
 
+# cd path settting include afs work area, if exists
 typeset -U cdpath
-{{ if eq .location "lxplus" }}
-cdpath=( ~/working /afs/cern.ch/work/${USER[1]}/$USER )
-{{ else }}
+{{- $afs_work := printf "/afs/cern.ch/work/%s/%s" (substr 0 1 .chezmoi.username) .chezmoi.username -}}
+{{- if stat $afs_work -}}
+cdpath=( ~/working {{ $afs_work }} )
+{{- else -}}
 cdpath=( ~/working )
+{{- end -}}
+
+{{ if hasPrefix "/afs" .chezmoi.homeDir }}
+export UV_LINK_MODE=copy
 {{ end }}
+
+# Local caches (chezmoi-managed)
+[ -f "{{ .chezmoi.homeDir }}/.config/local-cache.sh" ] && source "{{ .chezmoi.homeDir }}/.config/local-cache.sh"
 
 # various shell tools
 
 # iTerm2 shell integration (guard so other terminals don't error)
-if [[ -n $ITERM_SESSION_ID && -r ~/.iterm2_shell_integration.zsh ]]; then
-    . ~/.iterm2_shell_integration.zsh
+if [[ -n $ITERM_SESSION_ID && -r "{{ .chezmoi.homeDir }}/.iterm2_shell_integration.zsh" ]]; then
+    source "{{ .chezmoi.homeDir }}/.iterm2_shell_integration.zsh"
     export ITERM2_SQUELCH_MARK=1
 fi
 

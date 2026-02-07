@@ -24,16 +24,23 @@ shopt -s dirspell
 shopt -s cdspell
 shopt -s direxpand
 
-{{ if eq .location "lxplus" }}
-export CDPATH="~/working:/afs/cern.ch/work/${USER:0:1}/${USER}"
+{{ $afs_work := printf "/afs/cern.ch/work/%s/%s" (substr 0 1 .chezmoi.username) .chezmoi.username -}}
+{{- if stat $afs_work -}}
+export CDPATH="~/working:{{ $afs_work }}"
+{{- else -}}
+export CDPATH="~/working"
+{{- end -}}
+
+{{ if hasPrefix "/afs" .chezmoi.homeDir }}
 export UV_LINK_MODE=copy
-{{ else }}
-export CDPATH=~/working
 {{ end }}
 
+# Local caches (chezmoi-managed)
+[ -f "{{ .chezmoi.homeDir }}/.config/local-cache.sh" ] && source "{{ .chezmoi.homeDir }}/.config/local-cache.sh"
+
 # iTerm2 shell integration (guard so other terminals don't error)
-if [[ -n "$ITERM_SESSION_ID" && -r ~/.iterm2_shell_integration.bash ]]; then
-    source ~/.iterm2_shell_integration.bash
+if [[ -n "$ITERM_SESSION_ID" && -r "{{ .chezmoi.homeDir }}/.iterm2_shell_integration.bash" ]]; then
+    source "{{ .chezmoi.homeDir }}/.iterm2_shell_integration.bash"
     export ITERM2_SQUELCH_MARK=1
 fi
 

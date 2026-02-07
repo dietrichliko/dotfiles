@@ -19,7 +19,7 @@ if ! pgrep -u "$USER" -x krenew >/dev/null 2>&1; then
         echo "$(date): Warning: Ticket not renewable" >> "$LOGFILE"
     fi
 
-    krenew -b -K 30 -t >> "$LOGFILE" 2>&1 &
+    krenew -b -K 30 -v >> "$LOGFILE" 2>&1 
 fi
 
 # Keep only 7 logs

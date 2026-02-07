@@ -30,8 +30,10 @@ $direnv\
 $line_break$container$character"""
 
 palette = 'gruvbox_dark'
-command_timeout = 1000
-scan_timeout = 500
+{{ if hasPrefix .chezmoi.homeDir "/afs" }}
+scan_timeout = 80
+show_scan_timeout = false
+{{ end }}
 
 [palettes.gruvbox_dark]
 color_fg0 = '#fbf1c7'
