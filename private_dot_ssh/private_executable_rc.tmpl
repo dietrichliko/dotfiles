@@ -1,0 +1,44 @@
+{{- if hasPrefix "/afs/" .chezmoi.homeDir -}}
+#!/bin/sh
+
+LOGDIR="$HOME"
+HOSTNAME=$(hostname -s)
+LOGFILE="$LOGDIR/.krenew_$(date +%F)_$HOSTNAME.log"
+
+log() {
+    printf '%s: %s\n' "$(date '+%F %T')" "$*" >> "$LOGFILE"
+}
+
+# Make sure log dir is writable
+if [ ! -w "$LOGDIR" ]; then
+    exit 0
+fi
+
+log "SSH connection started"
+
+# Check for krenew
+if ! command -v krenew >/dev/null 2>&1; then
+    log "krenew not found, skipping"
+    exit 0
+fi
+
+# Start only one krenew per user
+if ! pgrep -u "$USER" -x krenew >/dev/null 2>&1; then
+    log "Starting krenew"
+
+    # Check if ticket is renewable
+    if ! klist -f 2>/dev/null | grep -q "R"; then
+        log "Warning: Ticket not renewable"
+    fi
+
+    # Start krenew in background
+    krenew -b -K 30 -v >> "$LOGFILE" 2>&1
+    log "krenew started"
+fi
+
+# Keep only 7 logs
+ls -1t "$LOGDIR"/.krenew_*.log 2>/dev/null | tail -n +8 | xargs -d '\n' -r rm --
+
+exit 0
+{{- end -}}
+
