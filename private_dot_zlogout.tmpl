@@ -1,0 +1,45 @@
+# Bitwarden Session Cleanup on Logout (zsh)
+# This file is sourced when zsh exits (logout)
+
+{{ if eq .chezmoi.os "darwin" }}
+# macOS: Keychain is system-wide and multi-session
+# Don't auto-cleanup here - user should use 'bw-lock' command
+# If we cleanup here, other terminal windows lose the session
+:
+
+{{ else if eq .location "desktop" "Desktop" }}
+# Desktop Linux: GNOME keyring auto-clears on GUI logout
+# This cleanup is technically redundant, but harmless
+# It helps if you logout from a terminal before logging out of GUI
+SESSION_KEY="bw_session_${USER}"
+secret-tool clear user "$USER" key "$SESSION_KEY" 2>/dev/null || :
+
+{{ else }}
+# Server: Opportunistic cleanup with kernel keyring
+# This handles the tricky ControlMaster scenario
+
+SESSION_KEY="bw_session_${USER}"
+
+# Check if a session key exists in the kernel keyring
+KEYID=$(keyctl search @s user "$SESSION_KEY" 2>/dev/null) || exit 0
+
+# Try to lock the vault (may fail if session expired, that's ok)
+bw lock 2>/dev/null || :
+
+# Remove the session key from kernel keyring
+keyctl unlink "$KEYID" @s 2>/dev/null || :
+
+# Note: If you're using SSH ControlMaster, this runs on EACH shell exit,
+# not just when the master SSH connection ends. The kernel keyring (@s)
+# persists as long as the SSH master is alive.
+#
+# Behavior:
+# - Close terminal 1 → cleanup runs → key removed
+# - Terminal 2 & 3 still work IF they already have BW_SESSION in env
+# - New terminal → sources bw-session.sh → creates new key
+#
+# This is acceptable because:
+# 1. Kernel keyring timeout (12h) provides defense-in-depth
+# 2. Manual 'bw-lock' command is available for explicit cleanup
+# 3. Session is cleared when SSH master finally disconnects
+{{ end }}

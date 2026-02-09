@@ -48,28 +48,6 @@ function lcg-view-setup() {
 
 }
 
-function bw-session() {
-
-    if [[ ! "$(bw status)" =~ \"status\":\"([^\"]+)\" ]]; then
-        echo "ERROR: Cannot get BitWarden status. rc = $?" >&2
-        return
-    fi
-    case ${BASH_REMATCH[1]} in
-        'unauthenticated')
-            export BW_SESSION=$(bw login Dietrich.Liko@gmail.com --method 0 --raw)
-            ;; 
-        'locked') 
-            export BW_SESSION=$(bw unlock --raw)
-            ;;
-        'unlocked')
-            echo "INFO: Bitwarden already unlocked." >&2
-            ;;
-        *) 
-            echo "ERROR: Bitwarden in unexpected state ${BASH_REMATCH[1]}" >&2
-            ;;
-    esac
-}
-
 function rucio-setup() {   
   . /cvmfs/cms.cern.ch/rucio/setup-py3.sh
 }
@@ -77,3 +55,39 @@ function rucio-setup() {
 function crab-setup() {
     . /cvmfs/cms.cern.ch/crab3/crab.sh
 }
+
+bwx() {
+    source ~/.local/libexec/bw-session.sh || return 1
+    "$@"
+}
+
+# Manual lock function - locks vault and clears session
+bw-lock() {
+    # Lock the vault
+    if bw lock 2>/dev/null; then
+        echo "Bitwarden vault locked"
+    fi
+    
+{{ if eq .chezmoi.os "darwin" }}
+    # macOS: Clear from keychain
+    if security delete-generic-password -a "$USER" -s "bw_session_${USER}" 2>/dev/null; then
+        echo "Session cleared from keychain"
+    fi
+{{ else if eq .location "desktop" "Desktop" }}
+    # Desktop Linux: Clear from GNOME keyring
+    if secret-tool clear user "$USER" key "bw_session_${USER}" 2>/dev/null; then
+        echo "Session cleared from GNOME keyring"
+    fi
+{{ else }}
+    # Server: Clear from kernel keyring
+    KEYID=$(keyctl search @s user "bw_session_${USER}" 2>/dev/null) && {
+        if keyctl unlink "$KEYID" @s 2>/dev/null; then
+            echo "Session cleared from kernel keyring"
+        fi
+    }
+{{ end }}
+    
+    # Also unset environment variable in current shell
+    unset BW_SESSION
+}
+
