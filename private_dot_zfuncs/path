@@ -1,4 +1,6 @@
-# ~/.zfunc/path
+# shellcheck shell=zsh
+#
+# ~/.zfuncs/path
 # 
 # pretty print PATH
 

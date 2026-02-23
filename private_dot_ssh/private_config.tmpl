@@ -60,9 +60,19 @@ Host hepgpu2
   Hostname hepgpu2.hephy.oeaw.ac.at
   User dliko
   ForwardAgent yes
-    
 
+Host dgxspark
+  Hostname 10.4.23.206
+  User dgxspark    
 
+Host higgsboson
+  Hostname ssh.1251000.xyz
+  User dietrich
+  ProxyCommand cloudflared access ssh --hostname %h
+
+Host higgsboson-local
+  Hostname 10.4.23.78
+  User dietrich
 
 {{ if eq .chezmoi.os "darwin" }}
 Host *

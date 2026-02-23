@@ -1,4 +1,7 @@
-# ~/.zfunc/pypath
+
+# shellcheck shell=zsh
+#
+# ~/.zfuncs/pypath
 # 
 # pretty print PYTHONPATH
 

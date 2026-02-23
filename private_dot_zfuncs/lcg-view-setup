@@ -1,4 +1,6 @@
-# ~/.zfunc/lcg-view-setup
+# shellcheck shell=zsh
+#
+# ~/.zfuncs/lcg-view-setup
 # 
 # setup a LCG_View environment
 

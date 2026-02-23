@@ -1,4 +1,6 @@
-# ~/.zfunc/ldpath
+# shellcheck shell=zsh
+#
+# ~/.zfuncs/ldpath
 # 
 # pretty print LD_LIBRARY_PATH
 

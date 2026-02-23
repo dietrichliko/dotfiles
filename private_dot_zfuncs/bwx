@@ -1,4 +1,6 @@
-# .zfuncs/bwx
+# shellcheck shell=zsh
+#
+# ~/.zfuncs/bwx
 #
 # Wrapper for commands that need Bitwarden session
 bwx() {

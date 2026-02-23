@@ -1,0 +1,10 @@
+# shellcheck shell=zsh
+#
+# ~/.zfuncs/py3path
+#
+# pretty print PYTHON3PATH
+
+echo "PYTHON3PATH="
+for p in ${(ps.:.)PYTHON3PATH}; do
+    echo "   $p"
+done
