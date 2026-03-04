@@ -1,6 +1,7 @@
 # Custom layouts
 
-{{- if and (stat "/cvmfs") (stat "/cvmfs").IsDir }}
+{{- $cvmfs_info := stat "/cvmfs" -}}
+{{- if and $cvmfs_info $cvmfs_info.isDir }}
 layout_cmssw() {
     if [ -z "$CMSPATH" ]; then
         echo "No CMS environment" >&2
