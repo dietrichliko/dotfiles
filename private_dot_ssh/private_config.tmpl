@@ -59,27 +59,25 @@ Host hepgpu2
   User dliko
   ForwardAgent yes
 
-Host dgxspark
-  Hostname 10.4.23.206
-  User dgxspark    
-
-Host higgs
-  Hostname ssh.higgs.1251000.xyz
+{{- if eq .location "desktop" }}
+Host blau
+  Hostname ssh.noether.1251000.xyz
   User dietrich
   ProxyCommand cloudflared access ssh --hostname %h
 
-Host dgxspark
-  Hostname ssh.dgx.1251000.xyz
+Host pauli
+  Hostname ssh.maxwell.1251000.xyz
   User dgxspark
   ProxyCommand cloudflared access ssh --hostname %h
 
-Host higgs-local
+Host blau-local
   Hostname 10.4.23.78
   User dietrich
 
-Host dgxspark-local
+Host pauli-local
   Hostname 10.4.23.206
-  User dgxspark  
+  User dgxspark
+{{ end -}}  
 
 {{ if eq .chezmoi.os "darwin" }}
 Host *
