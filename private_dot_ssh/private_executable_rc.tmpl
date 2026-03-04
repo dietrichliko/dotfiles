@@ -32,7 +32,7 @@ if ! pgrep -u "$USER" -x krenew >/dev/null 2>&1; then
     fi
 
     # Start krenew in background
-    krenew -b -K 30 -v >> "$LOGFILE" 2>&1
+    krenew -K 30 -v >> "$LOGFILE" 2>&1 &
     log "krenew started"
 fi
 

@@ -1,0 +1,11 @@
+README.md
+{{- if eq .location "clip" }}
+.zprofile
+.zshrc
+.zfunc
+{{ end -}}
+{{- if eq .location "clip" "lxplus" }}
+.local/bin/bw-ssh
+.local/libexec/bw-session.sh
+.local/libexec/bw-ssh_helper.sh
+{{ end -}}

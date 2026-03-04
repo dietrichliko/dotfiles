@@ -1,10 +1,11 @@
-# shellcheck shell=zsh
+# shellcheck shell=bash
 #
 # ~/.zfuncs/py27path
 # 
 # pretty print PYTHON27PATH
 
 echo "PYTHON27PATH="
+# shellcheck disable=SC2296
 for p in ${(ps.:.)PYTHON27PATH}; do
     echo "   $p"
 done

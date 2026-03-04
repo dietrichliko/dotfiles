@@ -1,10 +1,11 @@
-# shellcheck shell=zsh
+# shellcheck shell=bash
 #
 # ~/.zfuncs/py3path
 #
 # pretty print PYTHON3PATH
 
 echo "PYTHON3PATH="
+# shellcheck disable=SC2296
 for p in ${(ps.:.)PYTHON3PATH}; do
     echo "   $p"
 done

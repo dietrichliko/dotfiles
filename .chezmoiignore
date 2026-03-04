@@ -1,6 +1,0 @@
-README.md
-{{- if eq .location "clip" }}
-.zprofile
-.zshrc
-.zfunc
-{{ end -}}

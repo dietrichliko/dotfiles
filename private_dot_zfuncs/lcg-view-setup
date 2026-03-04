@@ -1,4 +1,5 @@
-# shellcheck shell=zsh
+# shellcheck shell=bash
+# zsh is not supported by shellcheck
 #
 # ~/.zfuncs/lcg-view-setup
 # 

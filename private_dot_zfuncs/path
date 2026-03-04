@@ -1,10 +1,11 @@
-# shellcheck shell=zsh
+# shellcheck shell=bash
 #
 # ~/.zfuncs/path
 # 
 # pretty print PATH
 
 echo "PATH="
+# shellcheck disable=SC2296
 for p in ${(ps.:.)PATH}; do
     echo "   $p"
 done

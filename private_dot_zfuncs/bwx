@@ -1,9 +1,0 @@
-# shellcheck shell=zsh
-#
-# ~/.zfuncs/bwx
-#
-# Wrapper for commands that need Bitwarden session
-bwx() {
-    source ~/.local/libexec/bw-session.sh || return 1
-    "$@"
-}
