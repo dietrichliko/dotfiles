@@ -26,7 +26,6 @@ Host lxplus lxplus.cern.ch
   ForwardAgent yes
   ServerAliveInterval 100
   PubkeyAuthentication no
-  GSSAPIAuthentication no
   HostbasedAuthentication no
   PasswordAuthentication no 
   KbdInteractiveAuthentication yes
@@ -44,7 +43,6 @@ Host delphi
   ForwardAgent yes
   ServerAliveInterval 100
   PubkeyAuthentication no
-  GSSAPIAuthentication no
   HostbasedAuthentication no
   PasswordAuthentication no 
   KbdInteractiveAuthentication yes
@@ -65,14 +63,23 @@ Host dgxspark
   Hostname 10.4.23.206
   User dgxspark    
 
-Host higgsboson
-  Hostname ssh.1251000.xyz
+Host higgs
+  Hostname ssh.higgs.1251000.xyz
   User dietrich
   ProxyCommand cloudflared access ssh --hostname %h
 
-Host higgsboson-local
+Host dgxspark
+  Hostname ssh.dgx.1251000.xyz
+  User dgxspark
+  ProxyCommand cloudflared access ssh --hostname %h
+
+Host higgs-local
   Hostname 10.4.23.78
   User dietrich
+
+Host dgxspark-local
+  Hostname 10.4.23.206
+  User dgxspark  
 
 {{ if eq .chezmoi.os "darwin" }}
 Host *
