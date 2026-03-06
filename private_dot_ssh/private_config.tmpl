@@ -61,22 +61,25 @@ Host hepgpu2
 
 {{- if eq .location "desktop" }}
 Host blau
-  Hostname ssh.noether.1251000.xyz
+  Hostname ssh-blau.1251000.xyz
   User dietrich
   ProxyCommand cloudflared access ssh --hostname %h
 
 Host pauli
-  Hostname ssh.maxwell.1251000.xyz
+  Hostname ssh-pauli.1251000.xyz
   User dgxspark
+  ForwardAgent yes
   ProxyCommand cloudflared access ssh --hostname %h
 
 Host blau-local
   Hostname 10.4.23.78
+  ForwardAgent yes
   User dietrich
 
 Host pauli-local
   Hostname 10.4.23.206
   User dgxspark
+  ForwardAgent yes
 {{ end -}}  
 
 {{ if eq .chezmoi.os "darwin" }}
