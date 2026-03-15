@@ -58,17 +58,7 @@ Host hepgpu2
   Hostname hepgpu2.hephy.oeaw.ac.at
   User dliko
   ForwardAgent yes
-<<<<<<< Updated upstream
-=======
     
-{{ if eq .chezmoi.os "darwin" }}
-Host higgsboson
-   Hostname ssh.1251000.xyz
-   ProxyCommand /opt/local/bin/cloudflared access ssh --hostname %h
-{{ end }}
-
-
->>>>>>> Stashed changes
 
 {{- if eq .location "desktop" }}
 Host blau
