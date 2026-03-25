@@ -26,13 +26,14 @@
    refreshPeriod = "168h"
 
 {{- $gh_version := trimPrefix "v" (gitHubLatestTag "cli/cli").Name }}
+{{- $gh_version := trimPrefix "v" (gitHubLatestTag "cli/cli").Name }}
 [".local/bin/gh"]
-   type = "archive"
+   type = "archive-file"
    url = {{ gitHubLatestReleaseAssetURL "cli/cli" (printf "gh_%s_linux_%s.tar.gz" $gh_version .chezmoi.arch) | quote }}
-   exact = false
-   stripComponents = 1
-   include = ["*/bin/gh"]
+   path = {{ printf "gh_%s_linux_%s/bin/gh" $gh_version .chezmoi.arch | quote }}
+   executable = true
    refreshPeriod = "168h"
+
 
 {{- $glabURL := getRedirectedURL (printf "https://gitlab.com/gitlab-org/cli/-/releases/permalink/latest/downloads/glab_%s_linux_%s.tar.gz" "0.0.0" .chezmoi.arch) }}
 {{- $glabVersion := $glabURL | regexFind "[0-9]+\\.[0-9]+\\.[0-9]+" }}
