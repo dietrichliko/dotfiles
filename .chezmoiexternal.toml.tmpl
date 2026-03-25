@@ -1,4 +1,10 @@
-{{ if eq .location "clip" "lxplus" }}
+{{- if eq .chezmoi.os "linux" }}
+{{- $musl := and (eq .chezmoi.osRelease.id "centos") (eq .chezmoi.osRelease.versionID "7") }}
+{{- $rustArch := .chezmoi.arch }}
+{{- if eq .chezmoi.arch "amd64" }}{{- $rustArch = "x86_64" }}{{- end }}
+{{- if eq .chezmoi.arch "arm64" }}{{- $rustArch = "aarch64" }}{{- end }}
+
+
 [".local/bin/fzf"]
    type = "archive-file"
    url = {{ gitHubLatestReleaseAssetURL "junegunn/fzf" (printf "fzf-%s-linux_%s.tar.gz" ((gitHubLatestTag "junegunn/fzf").Name | trimPrefix "v") .chezmoi.arch) | quote }}
@@ -14,29 +20,52 @@
 
 [".local/bin/starship"]
    type = "archive-file"
-{{ if eq .location "clip" }}
-   url = {{ gitHubLatestReleaseAssetURL "starship/starship" "starship-x86_64-unknown-linux-musl.tar.gz" | quote }}
-{{ else }}
-   url = {{ gitHubLatestReleaseAssetURL "starship/starship" "starship-x86_64-unknown-linux-gnu.tar.gz" | quote }}
-{{ end }}
+   url = {{ gitHubLatestReleaseAssetURL "starship/starship" (printf "starship-%s-unknown-linux-%s.tar.gz" $rustArch (ternary "musl" "gnu" $musl)) | quote }}
    path = "starship"
    executable = true
    refreshPeriod = "168h"
 
-#[".local/bin/git-cliff"]
-#   type = "archive-file"
-#   url = {{ gitHubLatestReleaseAssetURL "orhun/git-cliff" (printf "git-cliff-%s-%s.tar.gz" .chezmoi.os .chezmoi.arch) | quote }}
-#   path = "git-cliff"
-#   executable = true
-#   refreshPeriod = "168h"
+{{- $gh_version := trimPrefix "v" (gitHubLatestTag "cli/cli").Name }}
+[".local/bin/gh"]
+   type = "archive"
+   url = {{ gitHubLatestReleaseAssetURL "cli/cli" (printf "gh_%s_linux_%s.tar.gz" $gh_version .chezmoi.arch) | quote }}
+   exact = false
+   stripComponents = 1
+   include = ["*/bin/gh"]
+   refreshPeriod = "168h"
 
-# {{- $gh_version := trimPrefix "v" (gitHubLatestTag "cli/cli").Name  -}}
+{{- $glabURL := getRedirectedURL (printf "https://gitlab.com/gitlab-org/cli/-/releases/permalink/latest/downloads/glab_%s_linux_%s.tar.gz" "0.0.0" .chezmoi.arch) }}
+{{- $glabVersion := $glabURL | regexFind "[0-9]+\\.[0-9]+\\.[0-9]+" }}
+[".local/bin/glab"]
+   type = "archive-file"
+   url = {{ printf "https://gitlab.com/gitlab-org/cli/-/releases/permalink/latest/downloads/glab_%s_linux_%s.tar.gz" $glabVersion .chezmoi.arch | quote }}
+   path = "bin/glab"
+   executable = true
+   refreshPeriod = "168h"
 
-#[".local/bin/gh"]
-#   type = "archive"
-#   url = {{ gitHubLatestReleaseAssetURL "cli/cli" (printf "gh_%s_%s_%s.tar.gz" $gh_version .chezmoi.os .chezmoi.arch) | quote }}
-#   exact = true
-#   stripComponents = 1
-#   exclude = ["LICENSE"]
-#   refreshPeriod = "168h"
-{{ end }}
+
+[".local/bin/uv"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "astral-sh/uv" (printf "uv-%s-unknown-linux-%s.tar.gz" $rustArch (ternary "musl" "gnu" $musl)) | quote }}
+   path = {{ printf "uv-%s-unknown-linux-%s/uv" $rustArch (ternary "musl" "gnu" $musl) | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/uvx"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "astral-sh/uv" (printf "uv-%s-unknown-linux-%s.tar.gz" $rustArch (ternary "musl" "gnu" $musl)) | quote }}
+   path = {{ printf "uv-%s-unknown-linux-%s/uvx" $rustArch (ternary "musl" "gnu" $musl) | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $gitCliffVersion := trimPrefix "v" (gitHubLatestTag "orhun/git-cliff").Name }}
+
+[".local/bin/git-cliff"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "orhun/git-cliff" (printf "git-cliff-%s-%s-unknown-linux-gnu.tar.gz" $gitCliffVersion $rustArch) | quote }}
+   path = {{ printf "git-cliff-%s/git-cliff" $gitCliffVersion | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+
+{{- end }}
