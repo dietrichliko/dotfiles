@@ -64,6 +64,7 @@ Host hepgpu2
 Host blau
   Hostname ssh-blau.1251000.xyz
   User dietrich
+  ForwardAgent yes
   ProxyCommand cloudflared access ssh --hostname %h
 
 Host pauli
