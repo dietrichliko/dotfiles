@@ -14,7 +14,7 @@
         submodule = log
 [credential]
 {{ if eq .chezmoi.os "darwin" }}
-        helper = osxchain
+        helper = osxkeychain
 {{ else if (eq .location "desktop") }}
         helper = libsecret
 {{ else }}
