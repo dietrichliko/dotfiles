@@ -82,6 +82,19 @@ Host pauli-local
   Hostname 10.4.23.206
   User dgxspark
   ForwardAgent yes
+
+Host galileo-local
+  Hostname galileo.lan
+  User sshd
+  
+Host newton-local
+  Hostname newton.lan
+  User dietrich
+
+Host newton
+  Hostname newto.1251000.xyz
+  FowardAgent yes
+  ProxyCommand cloudflared access ssh --hostname %h
 {{ end -}}  
 
 {{ if eq .chezmoi.os "darwin" }}
