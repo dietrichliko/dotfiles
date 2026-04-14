@@ -1,0 +1,11 @@
+set encoding=utf-8
+set fileencodings=utf-8,latin1
+syntax on
+set number          " line numbers
+set tabstop=4       " tab width
+set expandtab       " spaces instead of tabs
+set autoindent
+set hlsearch        " highlight search results
+set incsearch       " incremental search
+set ruler           " show cursor position
+set wildmenu        " better command completion
