@@ -71,7 +71,7 @@
    refreshPeriod = "168h"
 
 
-{{- $glowVersion := trimPrefix "v" (gitHubLatestTag "charmbracelet/glow").Name }}
+{{- $glowVersion := trimPrefix "v" (gitHubLatestRelease "charmbracelet/glow").TagName }}
 
 [".local/bin/glow"]
    type = "archive-file"
@@ -80,7 +80,7 @@
    executable = true
    refreshPeriod = "168h"
 
-{{- $batVersion := (gitHubLatestTag "sharkdp/bat").Name }}
+{{- $batVersion := (gitHubLatestRelease "sharkdp/bat").TagName }}
 
 [".local/bin/bat"]
    type = "archive-file"
