@@ -3,6 +3,8 @@
 {{- $rustArch := .chezmoi.arch }}
 {{- if eq .chezmoi.arch "amd64" }}{{- $rustArch = "x86_64" }}{{- end }}
 {{- if eq .chezmoi.arch "arm64" }}{{- $rustArch = "aarch64" }}{{- end }}
+{{- $charmArch := .chezmoi.arch }}
+{{- if eq .chezmoi.arch "amd64" }}{{- $charmArch = "x86_64" }}{{- end }}
 
 
 [".local/bin/fzf"]
@@ -65,6 +67,25 @@
    type = "archive-file"
    url = {{ gitHubLatestReleaseAssetURL "orhun/git-cliff" (printf "git-cliff-%s-%s-unknown-linux-gnu.tar.gz" $gitCliffVersion $rustArch) | quote }}
    path = {{ printf "git-cliff-%s/git-cliff" $gitCliffVersion | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+
+{{- $glowVersion := trimPrefix "v" (gitHubLatestTag "charmbracelet/glow").Name }}
+
+[".local/bin/glow"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "charmbracelet/glow" (printf "glow_%s_Linux_%s.tar.gz" $glowVersion $charmArch) | quote }}
+   path = "glow"
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $batVersion := (gitHubLatestTag "sharkdp/bat").Name }}
+
+[".local/bin/bat"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "sharkdp/bat" (printf "bat-%s-%s-unknown-linux-%s.tar.gz" $batVersion $rustArch (ternary "musl" "gnu" $musl)) | quote }}
+   path = {{ printf "bat-%s-%s-unknown-linux-%s/bat" $batVersion $rustArch (ternary "musl" "gnu" $musl) | quote }}
    executable = true
    refreshPeriod = "168h"
 
