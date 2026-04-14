@@ -80,12 +80,12 @@
    executable = true
    refreshPeriod = "168h"
 
-{{- $batVersion := (gitHubLatestRelease "sharkdp/bat").TagName }}
+{{- $batVersion := trimPrefix "v" (gitHubLatestRelease "sharkdp/bat").TagName }}
 
 [".local/bin/bat"]
    type = "archive-file"
    url = {{ gitHubLatestReleaseAssetURL "sharkdp/bat" (printf "bat-*-%s-unknown-linux-%s.tar.gz" $rustArch (ternary "musl" "gnu" $musl)) | quote }}
-   path = {{ printf "bat-%s-%s-unknown-linux-%s/bat" $batVersion $rustArch (ternary "musl" "gnu" $musl) | quote }}
+   path = {{ printf "bat-v%s-%s-unknown-linux-%s/bat" $batVersion $rustArch (ternary "musl" "gnu" $musl) | quote }}
    executable = true
    refreshPeriod = "168h"
 
