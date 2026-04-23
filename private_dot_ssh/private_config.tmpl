@@ -92,10 +92,13 @@ Host newton-local
   User dietrich
 
 Host newton
-  Hostname newto.1251000.xyz
+  Hostname ssh-newton.1251000.xyz
   ForwardAgent yes
   ProxyCommand cloudflared access ssh --hostname %h
-{{ end -}}  
+{{ end }}  
+
+Host gitlab.cern.ch
+  Port 7999
 
 {{ if eq .chezmoi.os "darwin" }}
 Host *
