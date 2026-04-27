@@ -73,12 +73,12 @@
 
 {{- $glowVersion := trimPrefix "v" (gitHubLatestRelease "charmbracelet/glow").TagName }}
 
-[".local/bin/glow"]
-   type = "archive-file"
-   url = {{ gitHubLatestReleaseAssetURL "charmbracelet/glow" (printf "glow_%s_Linux_%s.tar.gz" $glowVersion $charmArch) | quote }}
-   path = "glow"
-   executable = true
-   refreshPeriod = "168h"
+#[".local/bin/glow"]
+#   type = "archive-file"
+#   url = {{ gitHubLatestReleaseAssetURL "charmbracelet/glow" (printf "glow_%s_Linux_%s.tar.gz" $glowVersion $charmArch) | quote }}
+#   path = "glow"
+#   executable = true
+#   refreshPeriod = "168h"
 
 {{- $batVersion := trimPrefix "v" (gitHubLatestRelease "sharkdp/bat").TagName }}
 
