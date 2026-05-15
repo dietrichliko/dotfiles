@@ -1,0 +1,121 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Apply sticky Time Machine exclusions to common build/cache directories
+# under $HOME. Idempotent — skips paths that already have the exclusion
+# extended attribute set.
+#
+# Uses xattr to check exclusion state (no Full Disk Access required).
+# Requires fd for fast traversal (sudo port install fd); falls back to find.
+#
+# Managed by chezmoi. Runs on every `chezmoi apply` so newly created
+# project directories get picked up automatically.
+
+set -u
+
+PATTERNS=(
+    "node_modules"
+    ".venv"
+    "venv"
+    "__pycache__"
+    ".pytest_cache"
+    ".mypy_cache"
+    ".ruff_cache"
+    ".tox"
+    "target"           # Rust / Maven
+    "build"            # generic
+    ".next"            # Next.js
+    "dist"
+    ".cache"
+    ".gradle"
+    ".direnv"
+)
+
+FIXED_PATHS=(
+    "$HOME/Library/Caches"
+    "$HOME/.cache"
+    "$HOME/.cargo/registry"
+    "$HOME/.rustup"
+    "$HOME/Library/Developer/Xcode/DerivedData"
+    "$HOME/Library/Developer/CoreSimulator/Caches"
+)
+
+EXCLUDE_XATTR="com.apple.metadata:com_apple_backup_excludeItem"
+
+excluded_count=0
+skipped_count=0
+
+# Check sticky exclusion via xattr — no FDA required, faster than tmutil.
+has_sticky_exclusion() {
+    xattr -p "$EXCLUDE_XATTR" "$1" >/dev/null 2>&1
+}
+
+exclude_sticky() {
+    local path="$1"
+
+    [[ ! -e "$path" ]] && return
+
+    if has_sticky_exclusion "$path"; then
+        skipped_count=$((skipped_count + 1))
+        return
+    fi
+
+    if tmutil addexclusion -p "$path" 2>/dev/null; then
+        echo "  excluded (sticky): $path"
+        excluded_count=$((excluded_count + 1))
+    fi
+}
+
+# Fixed paths use plain (non-sticky) exclusion since they live at known
+# locations and aren't expected to move. tmutil addexclusion is itself
+# idempotent — re-applying is a no-op — so we just call it unconditionally.
+exclude_fixed() {
+    local path="$1"
+    [[ ! -e "$path" ]] && return
+    tmutil addexclusion "$path" 2>/dev/null
+}
+
+# fd-based search: single traversal using a regex alternation over all patterns.
+find_with_fd() {
+    local regex
+    regex=$(printf '%s\n' "${PATTERNS[@]}" | sed 's/\./\\./g' | tr '\n' '|' | sed 's/|$//')
+    fd -t d -H -I --prune -0 \
+        -E '.Trash' \
+        -E 'Library/Mobile Documents' \
+        "^(${regex})$" \
+        "$HOME"
+}
+
+find_with_find() {
+    local find_args=("$HOME" -type d \(
+        -name "${PATTERNS[0]}"
+    )
+    for pattern in "${PATTERNS[@]:1}"; do
+        find_args+=(-o -name "$pattern")
+    done
+    find_args+=(\)
+        -not -path "*/.Trash/*"
+        -not -path "*/Library/Mobile Documents/*"
+        -prune -print0
+    )
+    find "${find_args[@]}" 2>/dev/null
+}
+
+echo "==> Time Machine exclusions: fixed paths"
+for path in "${FIXED_PATHS[@]}"; do
+    exclude_fixed "$path"
+done
+
+echo "==> Time Machine exclusions: project caches under \$HOME"
+if command -v fd >/dev/null 2>&1; then
+    finder=find_with_fd
+else
+    echo "  note: fd not found, falling back to find. Install with: sudo port install fd"
+    finder=find_with_find
+fi
+
+while IFS= read -r -d '' dir; do
+    exclude_sticky "$dir"
+done < <($finder)
+
+echo "==> Done. Newly excluded: $excluded_count, already excluded: $skipped_count"
+{{- end }}

@@ -1,3 +1,47 @@
+{{- $batExtrasVersion := trimPrefix "v" (gitHubLatestRelease "eth-p/bat-extras").TagName }}
+
+[".local/bin/batdiff"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "eth-p/bat-extras" (printf "bat-extras-%s.zip" $batExtrasVersion) | quote }}
+   path = "bin/batdiff"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/batgrep"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "eth-p/bat-extras" (printf "bat-extras-%s.zip" $batExtrasVersion) | quote }}
+   path = "bin/batgrep"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/batman"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "eth-p/bat-extras" (printf "bat-extras-%s.zip" $batExtrasVersion) | quote }}
+   path = "bin/batman"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/batpipe"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "eth-p/bat-extras" (printf "bat-extras-%s.zip" $batExtrasVersion) | quote }}
+   path = "bin/batpipe"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/batwatch"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "eth-p/bat-extras" (printf "bat-extras-%s.zip" $batExtrasVersion) | quote }}
+   path = "bin/batwatch"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/prettybat"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "eth-p/bat-extras" (printf "bat-extras-%s.zip" $batExtrasVersion) | quote }}
+   path = "bin/prettybat"
+   executable = true
+   refreshPeriod = "168h"
+
 {{- if eq .chezmoi.os "linux" }}
 {{- $musl := and (eq .chezmoi.osRelease.id "centos") (eq .chezmoi.osRelease.versionID "7") }}
 {{- $rustArch := .chezmoi.arch }}
@@ -73,12 +117,12 @@
 
 {{- $glowVersion := trimPrefix "v" (gitHubLatestRelease "charmbracelet/glow").TagName }}
 
-#[".local/bin/glow"]
-#   type = "archive-file"
-#   url = {{ gitHubLatestReleaseAssetURL "charmbracelet/glow" (printf "glow_%s_Linux_%s.tar.gz" $glowVersion $charmArch) | quote }}
-#   path = "glow"
-#   executable = true
-#   refreshPeriod = "168h"
+[".local/bin/glow"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "charmbracelet/glow" (printf "glow_%s_Linux_%s.tar.gz" $glowVersion $charmArch) | quote }}
+   path = {{ printf "glow_%s_Linux_%s/glow" $glowVersion $charmArch | quote }}
+   executable = true
+   refreshPeriod = "168h"
 
 {{- $batVersion := trimPrefix "v" (gitHubLatestRelease "sharkdp/bat").TagName }}
 
@@ -86,6 +130,234 @@
    type = "archive-file"
    url = {{ gitHubLatestReleaseAssetURL "sharkdp/bat" (printf "bat-*-%s-unknown-linux-%s.tar.gz" $rustArch (ternary "musl" "gnu" $musl)) | quote }}
    path = {{ printf "bat-v%s-%s-unknown-linux-%s/bat" $batVersion $rustArch (ternary "musl" "gnu" $musl) | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+
+{{- $fdVersion := trimPrefix "v" (gitHubLatestTag "sharkdp/fd").Name }}
+
+[".local/bin/fd"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "sharkdp/fd" (printf "fd-v%s-%s-unknown-linux-%s.tar.gz" $fdVersion $rustArch (ternary "musl" "gnu" $musl)) | quote }}
+   path = {{ printf "fd-v%s-%s-unknown-linux-%s/fd" $fdVersion $rustArch (ternary "musl" "gnu" $musl) | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $rgVersion := trimPrefix "v" (gitHubLatestRelease "BurntSushi/ripgrep").TagName }}
+{{- $rgLinuxVariant := "gnu" }}
+{{- if eq $rustArch "x86_64" }}{{- $rgLinuxVariant = "musl" }}{{- end }}
+
+[".local/bin/rg"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "BurntSushi/ripgrep" (printf "ripgrep-%s-%s-unknown-linux-%s.tar.gz" $rgVersion $rustArch $rgLinuxVariant) | quote }}
+   path = {{ printf "ripgrep-%s-%s-unknown-linux-%s/rg" $rgVersion $rustArch $rgLinuxVariant | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/eza"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "eza-community/eza" (printf "eza_%s-unknown-linux-%s.tar.gz" $rustArch (ternary "musl" "gnu" $musl)) | quote }}
+   path = "eza"
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $dustVersion := trimPrefix "v" (gitHubLatestTag "bootandy/dust").Name }}
+
+[".local/bin/dust"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "bootandy/dust" (printf "dust-v%s-%s-unknown-linux-%s.tar.gz" $dustVersion $rustArch (ternary "musl" "gnu" $musl)) | quote }}
+   path = {{ printf "dust-v%s-%s-unknown-linux-%s/dust" $dustVersion $rustArch (ternary "musl" "gnu" $musl) | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $zoxideVersion := trimPrefix "v" (gitHubLatestTag "ajeetdsouza/zoxide").Name }}
+
+[".local/bin/zoxide"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "ajeetdsouza/zoxide" (printf "zoxide-%s-%s-unknown-linux-musl.tar.gz" $zoxideVersion $rustArch) | quote }}
+   path = "zoxide"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/btm"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "ClementTsang/bottom" (printf "bottom_%s-unknown-linux-%s.tar.gz" $rustArch (ternary "musl" "gnu" $musl)) | quote }}
+   path = "btm"
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $hyperfineVersion := trimPrefix "v" (gitHubLatestTag "sharkdp/hyperfine").Name }}
+
+[".local/bin/hyperfine"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "sharkdp/hyperfine" (printf "hyperfine-v%s-%s-unknown-linux-%s.tar.gz" $hyperfineVersion $rustArch (ternary "musl" "gnu" $musl)) | quote }}
+   path = {{ printf "hyperfine-v%s-%s-unknown-linux-%s/hyperfine" $hyperfineVersion $rustArch (ternary "musl" "gnu" $musl) | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $sdVersion := trimPrefix "v" (gitHubLatestTag "chmln/sd").Name }}
+
+[".local/bin/sd"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "chmln/sd" (printf "sd-v%s-%s-unknown-linux-%s.tar.gz" $sdVersion $rustArch (ternary "musl" "gnu" $musl)) | quote }}
+   path = {{ printf "sd-v%s-%s-unknown-linux-%s/sd" $sdVersion $rustArch (ternary "musl" "gnu" $musl) | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/procs"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "dalance/procs" (printf "procs-v%s-%s-linux.zip" (trimPrefix "v" (gitHubLatestTag "dalance/procs").Name) $rustArch) | quote }}
+   path = "procs"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/tldr"]
+   type = "file"
+   url = {{ gitHubLatestReleaseAssetURL "tealdeer-rs/tealdeer" (printf "tealdeer-linux-%s-musl" $rustArch) | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $gpingLinuxVariant := ternary "musl" "gnu" (eq $rustArch "x86_64") }}
+{{- $gpingLinuxArch := ternary "x86_64" "arm64" (eq $rustArch "x86_64") }}
+
+[".local/bin/gping"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "orf/gping" (printf "gping-Linux-%s-%s.tar.gz" $gpingLinuxVariant $gpingLinuxArch) | quote }}
+   path = "gping"
+   executable = true
+   refreshPeriod = "168h"
+
+
+{{- end }}
+{{- if eq .chezmoi.os "darwin" }}
+{{- $darwinArch := .chezmoi.arch }}
+{{- if eq .chezmoi.arch "amd64" }}{{- $darwinArch = "x86_64" }}{{- end }}
+{{- if eq .chezmoi.arch "arm64" }}{{- $darwinArch = "aarch64" }}{{- end }}
+
+[".local/bin/uv"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "astral-sh/uv" (printf "uv-%s-apple-darwin.tar.gz" $darwinArch) | quote }}
+   path = {{ printf "uv-%s-apple-darwin/uv" $darwinArch | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/uvx"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "astral-sh/uv" (printf "uv-%s-apple-darwin.tar.gz" $darwinArch) | quote }}
+   path = {{ printf "uv-%s-apple-darwin/uvx" $darwinArch | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $batVersion := trimPrefix "v" (gitHubLatestRelease "sharkdp/bat").TagName }}
+
+[".local/bin/bat"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "sharkdp/bat" (printf "bat-v%s-%s-apple-darwin.tar.gz" $batVersion $darwinArch) | quote }}
+   path = {{ printf "bat-v%s-%s-apple-darwin/bat" $batVersion $darwinArch | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- if eq .chezmoi.arch "arm64" }}
+{{- $fdVersion := trimPrefix "v" (gitHubLatestTag "sharkdp/fd").Name }}
+
+[".local/bin/fd"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "sharkdp/fd" (printf "fd-v%s-%s-apple-darwin.tar.gz" $fdVersion $darwinArch) | quote }}
+   path = {{ printf "fd-v%s-%s-apple-darwin/fd" $fdVersion $darwinArch | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- end }}
+{{- $rgVersion := trimPrefix "v" (gitHubLatestRelease "BurntSushi/ripgrep").TagName }}
+
+[".local/bin/rg"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "BurntSushi/ripgrep" (printf "ripgrep-%s-%s-apple-darwin.tar.gz" $rgVersion $darwinArch) | quote }}
+   path = {{ printf "ripgrep-%s-%s-apple-darwin/rg" $rgVersion $darwinArch | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $dustVersion := trimPrefix "v" (gitHubLatestTag "bootandy/dust").Name }}
+
+[".local/bin/dust"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "bootandy/dust" (printf "dust-v%s-x86_64-apple-darwin.tar.gz" $dustVersion) | quote }}
+   path = {{ printf "dust-v%s-x86_64-apple-darwin/dust" $dustVersion | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $gitCliffVersion := trimPrefix "v" (gitHubLatestTag "orhun/git-cliff").Name }}
+
+[".local/bin/git-cliff"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "orhun/git-cliff" (printf "git-cliff-%s-%s-apple-darwin.tar.gz" $gitCliffVersion $darwinArch) | quote }}
+   path = {{ printf "git-cliff-%s/git-cliff" $gitCliffVersion | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $zoxideVersion := trimPrefix "v" (gitHubLatestTag "ajeetdsouza/zoxide").Name }}
+
+[".local/bin/zoxide"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "ajeetdsouza/zoxide" (printf "zoxide-%s-%s-apple-darwin.tar.gz" $zoxideVersion $darwinArch) | quote }}
+   path = "zoxide"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/btm"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "ClementTsang/bottom" (printf "bottom_%s-apple-darwin.tar.gz" $darwinArch) | quote }}
+   path = "btm"
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $hyperfineVersion := trimPrefix "v" (gitHubLatestTag "sharkdp/hyperfine").Name }}
+
+[".local/bin/hyperfine"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "sharkdp/hyperfine" (printf "hyperfine-v%s-%s-apple-darwin.tar.gz" $hyperfineVersion $darwinArch) | quote }}
+   path = {{ printf "hyperfine-v%s-%s-apple-darwin/hyperfine" $hyperfineVersion $darwinArch | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $sdVersion := trimPrefix "v" (gitHubLatestTag "chmln/sd").Name }}
+
+[".local/bin/sd"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "chmln/sd" (printf "sd-v%s-%s-apple-darwin.tar.gz" $sdVersion $darwinArch) | quote }}
+   path = {{ printf "sd-v%s-%s-apple-darwin/sd" $sdVersion $darwinArch | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/procs"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "dalance/procs" (printf "procs-v%s-%s-mac.zip" (trimPrefix "v" (gitHubLatestTag "dalance/procs").Name) $darwinArch) | quote }}
+   path = "procs"
+   executable = true
+   refreshPeriod = "168h"
+
+[".local/bin/tldr"]
+   type = "file"
+   url = {{ gitHubLatestReleaseAssetURL "tealdeer-rs/tealdeer" (printf "tealdeer-macos-%s" $darwinArch) | quote }}
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $gpingDarwinArch := ternary "arm64" "x86_64" (eq .chezmoi.arch "arm64") }}
+
+[".local/bin/gping"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "orf/gping" (printf "gping-macOS-%s.tar.gz" $gpingDarwinArch) | quote }}
+   path = "gping"
+   executable = true
+   refreshPeriod = "168h"
+
+{{- $glowVersion := trimPrefix "v" (gitHubLatestRelease "charmbracelet/glow").TagName }}
+{{- $glowDarwinArch := ternary "arm64" "x86_64" (eq .chezmoi.arch "arm64") }}
+
+[".local/bin/glow"]
+   type = "archive-file"
+   url = {{ gitHubLatestReleaseAssetURL "charmbracelet/glow" (printf "glow_%s_Darwin_%s.tar.gz" $glowVersion $glowDarwinArch) | quote }}
+   path = {{ printf "glow_%s_Darwin_%s/glow" $glowVersion $glowDarwinArch | quote }}
    executable = true
    refreshPeriod = "168h"
 
