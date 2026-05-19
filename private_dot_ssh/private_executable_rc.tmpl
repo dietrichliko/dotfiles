@@ -3,32 +3,32 @@
 
 LOGDIR="$HOME"
 HOSTNAME=$(hostname -s)
-LOGFILE="$LOGDIR/.krenew_$(date +%F)_$HOSTNAME.log"
+LOGFILE="$LOGDIR/.krenew_${HOSTNAME}.log"
 
 log() {
     printf '%s: %s\n' "$(date '+%F %T')" "$*" >> "$LOGFILE"
 }
 
-# Make sure log dir is writable
+# Exit silently if home is not writable
 if [ ! -w "$LOGDIR" ]; then
     exit 0
 fi
 
-log "SSH connection started"
-
-# Check for krenew
+# Only proceed if krenew exists
 if ! command -v krenew >/dev/null 2>&1; then
-    log "krenew not found, skipping"
     exit 0
 fi
 
-# Start only one krenew per user
-if ! pgrep -u "$USER" -x krenew >/dev/null 2>&1; then
+# Start only one krenew per user on this node
+if ! pgrep -u "$USER" -f "krenew -K" >/dev/null 2>&1; then
+
     log "Starting krenew"
 
-    # Check if ticket is renewable
-    if ! klist -f 2>/dev/null | grep -q "R"; then
-        log "Warning: Ticket not renewable"
+    # Optional: warn if ticket is not renewable
+    if command -v klist >/dev/null 2>&1; then
+        if ! klist -f 2>/dev/null | grep -q "R"; then
+            log "Warning: Ticket is not renewable"
+        fi
     fi
 
     # Start krenew in background
@@ -36,8 +36,8 @@ if ! pgrep -u "$USER" -x krenew >/dev/null 2>&1; then
     log "krenew started"
 fi
 
-# Keep only 7 logs
-ls -1t "$LOGDIR"/.krenew_*.log 2>/dev/null | tail -n +8 | xargs -d '\n' -r rm --
+# Keep only last 7 logs (safe cleanup)
+ls -1t "$LOGDIR"/.krenew_*.log 2>/dev/null | tail -n +8 | xargs -r rm --
 
 exit 0
 {{- end -}}
