@@ -24,6 +24,9 @@ shopt -s dirspell
 shopt -s cdspell
 shopt -s direxpand
 
+# CERN gitlab as default
+export GITLAB_HOST=gitlab.cern.ch
+
 {{ $afs_work := printf "/afs/cern.ch/work/%s/%s" (substr 0 1 .chezmoi.username) .chezmoi.username -}}
 {{- if stat $afs_work -}}
 export CDPATH="~/working:{{ $afs_work }}"

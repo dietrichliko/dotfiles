@@ -61,25 +61,25 @@ Host hepgpu2
     
 
 {{- if eq .location "desktop" }}
-Host blau
-  Hostname ssh-blau.1251000.xyz
+Host blau ssh-blau ssh-blau.mbi-ai.dev
+  Hostname ssh-blau.mbi-ai.dev
   User dietrich
   ForwardAgent yes
   ProxyCommand cloudflared access ssh --hostname %h
 
-Host pauli
-  Hostname ssh-pauli.1251000.xyz
+Host pauli ssh-pauli ssh-pauli.mbi-ai.dev
+  Hostname ssh-pauli.mbi-ai.dev
   User dgxspark
   ForwardAgent yes
   ProxyCommand cloudflared access ssh --hostname %h
 
 Host blau-local
-  Hostname 10.4.23.78
+  Hostname blau-local.mbi-ai.dev
   ForwardAgent yes
   User dietrich
 
 Host pauli-local
-  Hostname pauli.lan
+  Hostname pauli-local.mbi-ai.dev
   User dgxspark
   ForwardAgent yes
 

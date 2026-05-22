@@ -13,6 +13,9 @@ HISTSIZE=1000
 SAVEHIST=1000
 setopt appendhistory autocd extendedglob nomatch notify histignorealldups sharehistory
 
+# CERN gitlab as default
+export GITLAB_HOST=gitlab.cern.ch
+
 # cd path setting include afs work area, if exists
 typeset -U cdpath
 {{- $afs_work := printf "/afs/cern.ch/work/%s/%s" (substr 0 1 .chezmoi.username) .chezmoi.username -}}
