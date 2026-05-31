@@ -154,11 +154,11 @@
    refreshPeriod = "168h"
 
 [".local/bin/eza"]
-   type = "archive-file"
-   url = {{ gitHubLatestReleaseAssetURL "eza-community/eza" (printf "eza_%s-unknown-linux-%s.tar.gz" $rustArch (ternary "musl" "gnu" $musl)) | quote }}
-   path = "eza"
-   executable = true
-   refreshPeriod = "168h"
+  type = "archive-file"
+  url = {{ gitHubLatestReleaseAssetURL "eza-community/eza" (printf "eza_%s-unknown-linux-gnu.tar.gz" $rustArch) | quote }}
+  path = "./eza"
+  executable = true
+  refreshPeriod = "168h"
 
 {{- $dustVersion := trimPrefix "v" (gitHubLatestTag "bootandy/dust").Name }}
 
