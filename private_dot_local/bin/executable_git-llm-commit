@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+# git-llm-commit — generate a conventional commit message via `llm` CLI
+# Usage: git-llm-commit [-y] [-b] [-m <model>] [-v] [-h]
+#   -y          skip confirmation prompt, commit immediately
+#   -b          include a short body (for complex changes; not recommended for clean changelogs)
+#   -m MODEL    override llm model (e.g. -m gpt-4o or -m qwen3:30b)
+#   -v          verbose: print the diff context passed to llm
+#   -h          show this help
+#
+# Default mode produces a single-line subject only — ideal for git-cliff changelogs.
+# Use -b when the *why* genuinely matters and you want it in git log.
+
+set -euo pipefail
+
+# ── defaults ─────────────────────────────────────────────────────────────────
+AUTO_YES=false
+WITH_BODY=false
+MODEL_FLAG=""
+VERBOSE=false
+
+# ── colours (disabled if not a tty) ──────────────────────────────────────────
+if [[ -t 1 ]]; then
+  BOLD='\033[1m'; CYAN='\033[0;36m'; GREEN='\033[0;32m'
+  YELLOW='\033[1;33m'; RED='\033[0;31m'; RESET='\033[0m'
+else
+  BOLD=''; CYAN=''; GREEN=''; YELLOW=''; RED=''; RESET=''
+fi
+
+die()  { echo -e "${RED}error:${RESET} $*" >&2; exit 1; }
+info() { echo -e "${CYAN}→${RESET} $*"; }
+
+# ── argument parsing ──────────────────────────────────────────────────────────
+while getopts ":ybm:vh" opt; do
+  case $opt in
+    y) AUTO_YES=true ;;
+    b) WITH_BODY=true ;;
+    m) MODEL_FLAG="-m $OPTARG" ;;
+    v) VERBOSE=true ;;
+    h)
+      sed -n '2,10p' "$0" | sed 's/^# \?//'
+      exit 0
+      ;;
+    :) die "option -$OPTARG requires an argument" ;;
+    \?) die "unknown option -$OPTARG" ;;
+  esac
+done
+
+# ── sanity checks ─────────────────────────────────────────────────────────────
+command -v llm >/dev/null 2>&1 || die "'llm' not found in PATH"
+command -v git >/dev/null 2>&1 || die "'git' not found in PATH"
+
+git rev-parse --git-dir >/dev/null 2>&1 || die "not inside a git repository"
+
+git diff --cached --quiet && die "no staged changes found — run 'git add' first"
+
+# ── build diff context ────────────────────────────────────────────────────────
+STAT=$(git diff --cached --stat)
+
+DIFF_LINES=$(git diff --cached -U3 | wc -l)
+DIFF=$(git diff --cached -U3 | head -n 400)
+TRUNCATED=""
+(( DIFF_LINES > 400 )) && TRUNCATED=" (truncated — diff was ${DIFF_LINES} lines)"
+
+CONTEXT="Files changed (stat):\n${STAT}\n\nDiff${TRUNCATED}:\n${DIFF}"
+
+if $VERBOSE; then
+  echo -e "${BOLD}── diff context passed to llm ──${RESET}"
+  echo -e "$CONTEXT"
+  echo -e "${BOLD}────────────────────────────────${RESET}"
+  echo
+fi
+
+# ── build prompt ──────────────────────────────────────────────────────────────
+if $WITH_BODY; then
+  PROMPT="Write a conventional commit message for the following git diff.
+
+Rules:
+- First line format: <type>(<scope>): <description>
+- Types: feat | fix | docs | style | refactor | perf | test | chore | ci | build
+- scope: optional, infer from changed file paths when obvious
+- description: imperative mood, lowercase, max 72 chars, no trailing period
+- Add a blank line, then a body of 1–3 short lines explaining *why* this change
+  was made (not what — the diff shows that). Keep it user-facing and factual.
+- Output ONLY the commit message. No explanation, no markdown fences.
+
+${CONTEXT}"
+else
+  PROMPT="Write a conventional commit message subject line for the following git diff.
+
+Rules:
+- Format: <type>(<scope>): <description>
+- Types: feat | fix | docs | style | refactor | perf | test | chore | ci | build
+- scope: optional, infer from changed file paths when obvious
+- description: imperative mood, lowercase, max 72 chars, no trailing period
+- Output ONLY the single subject line. No body, no explanation, no markdown fences.
+  This will be parsed by git-cliff to generate a CHANGELOG — keep it clean and precise.
+
+${CONTEXT}"
+fi
+
+# ── call llm ──────────────────────────────────────────────────────────────────
+info "asking llm to draft a commit message…"
+
+# shellcheck disable=SC2086
+MSG=$(printf '%s' "$PROMPT" | llm $MODEL_FLAG) \
+  || die "llm call failed"
+
+[[ -z "$MSG" ]] && die "llm returned an empty message"
+
+# Strip accidental markdown fences or leading/trailing blank lines
+MSG=$(echo "$MSG" | sed '/^```/d' | sed '/^[[:space:]]*$/d' | sed 's/^[[:space:]]*//')
+
+# ── show proposal ─────────────────────────────────────────────────────────────
+echo
+echo -e "${BOLD}── proposed commit message ─────────────────────────────────${RESET}"
+echo -e "${YELLOW}${MSG}${RESET}"
+if ! $WITH_BODY; then
+  echo -e "${BOLD}────────────────────────────────────────────────────────────${RESET}"
+  echo -e "  ${CYAN}tip:${RESET} use ${BOLD}-b${RESET} to include a body for complex changes"
+fi
+echo -e "${BOLD}────────────────────────────────────────────────────────────${RESET}"
+echo
+
+# ── confirm & commit ──────────────────────────────────────────────────────────
+commit_with_msg() {
+  git commit -m "$1"
+  echo -e "${GREEN}✓ committed.${RESET}"
+}
+
+if $AUTO_YES; then
+  commit_with_msg "$MSG"
+else
+  read -r -p "$(echo -e "${BOLD}Commit with this message?${RESET} [Y/n/e] ")" REPLY </dev/tty
+  REPLY=${REPLY:-y}
+
+  case "${REPLY,,}" in
+    y|yes)
+      commit_with_msg "$MSG"
+      ;;
+    e|edit)
+      TMPFILE=$(mktemp /tmp/git-llm-commit.XXXXXX)
+      printf '%s\n' "$MSG" > "$TMPFILE"
+      ${EDITOR:-vi} "$TMPFILE"
+      EDITED=$(cat "$TMPFILE")
+      rm -f "$TMPFILE"
+      [[ -z "$EDITED" ]] && die "empty message after edit — aborting"
+      commit_with_msg "$EDITED"
+      ;;
+    *)
+      info "aborted — nothing committed"
+      exit 1
+      ;;
+  esac
+fi

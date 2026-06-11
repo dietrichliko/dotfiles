@@ -1,0 +1,17 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+# Install voms-agent via uv tool
+# voms-agent manages VOMS proxies for grid computing
+
+set -eufo pipefail
+
+UV="$HOME/.local/bin/uv"
+
+if [[ ! -x "$UV" ]]; then
+    echo "uv not found at $UV — skipping voms-agent install" >&2
+    exit 0
+fi
+
+echo "Installing voms-agent..."
+"$UV" tool install voms-agent
+{{- end -}}

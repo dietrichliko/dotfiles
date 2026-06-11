@@ -36,6 +36,7 @@ export CDPATH="~/working"
 
 {{ if hasPrefix "/afs" .chezmoi.homeDir }}
 export UV_LINK_MODE=copy
+export X509_USER_PROXY="$HOME/private/x509up_u$(id -u)"
 {{ end }}
 
 # Local caches (chezmoi-managed)
