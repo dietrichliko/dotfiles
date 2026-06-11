@@ -18,7 +18,7 @@ export PATH="$HOME/.local/bin:$PATH"
 {{- if eq .chezmoi.os "linux" }}
 # Refresh VOMS proxy once per day
 if command -v voms-agent >/dev/null 2>&1; then
-   voms-agent --silent
+   voms-agent --quiet
 fi
 {{- end }}
 
