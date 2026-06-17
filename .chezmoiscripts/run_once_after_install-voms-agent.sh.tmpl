@@ -13,5 +13,5 @@ if [[ ! -x "$UV" ]]; then
 fi
 
 echo "Installing voms-agent..."
-"$UV" tool install voms-agent
+"$UV" tool install voms-agent --index https://gitlab.cern.ch/api/v4/projects/liko%2Fvoms-agent/packages/pypi/simple
 {{- end -}}
