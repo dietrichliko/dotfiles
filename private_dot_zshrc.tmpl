@@ -56,6 +56,11 @@ if command -v starship >/dev/null 2>&1; then
     eval "$(starship init zsh)"
 fi
 
+# zoxide (guard if not installed)
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init zsh)"
+fi
+
 
 # fzf integration (load after prompt)
 if command -v fzf >/dev/null 2>&1; then
