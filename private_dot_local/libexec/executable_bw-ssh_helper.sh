@@ -11,10 +11,10 @@ fi
 
 case "${BASH_REMATCH[1]}" in
     dliko@lxplus*.cern.ch)
-        id="86e7067a-6e82-41b9-a6f8-add4010274f5"
+        id="8befbdec-876d-4403-896b-823e38b98aad"
         ;;
     liko@lxplus*.cern.ch)
-        id="614223ea-4ae4-44ec-9f8c-ac5300ea104a"
+        id="5a127c4b-6b03-4660-828c-58dc40f2a5b2"
         ;;
     *)
         echo "Unknown: ${BASH_REMATCH[1]}"
