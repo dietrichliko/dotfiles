@@ -10,6 +10,13 @@ Host clip cbe.vbc.ac.at
   IdentityFile ~/.ssh/id_ecdsa
 {{ end }}
 
+Host sshjump.vbc.ac.at cbe.next
+    User $u
+
+Host cbe.next
+    HostName cbenext.vbc.ac.at
+    ProxyJump sshjump.vbc.ac.at
+
 Host cmsconnect login-el7.uscms.org
   Hostname login-el7.uscms.org
   User liko
@@ -73,12 +80,13 @@ Host pauli ssh-pauli ssh-pauli.mbi-ai.dev
   ForwardAgent yes
   ProxyCommand cloudflared access ssh --hostname %h
 
-Host blau-local
+Host blau-local blau-local.mbi-ai.dev
   Hostname blau-local.mbi-ai.dev
+  User core
   ForwardAgent yes
   User dietrich
 
-Host pauli-local
+Host pauli-local pauli-local.mbi-ai.dev
   Hostname pauli-local.mbi-ai.dev
   User dgxspark
   ForwardAgent yes
