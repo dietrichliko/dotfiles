@@ -1,8 +1,7 @@
 [data]
 {{- if regexMatch "lxplus\\d+\\.cern\\.ch" .chezmoi.fqdnHostname }}
     location = "lxplus"
-{{- /* CLIP (*.cbe.vbc.ac.at) and CBE next (*.clip.vbc.ac.at) share the same setup */}}
-{{ else if regexMatch "\\.(cbe|clip)\\.vbc\\.ac\\.at$" .chezmoi.fqdnHostname }}
+{{ else if regexMatch "\\.clip\\.vbc\\.ac\\.at$" .chezmoi.fqdnHostname }}
     location = "clip"
 {{ else }}
     location = "desktop"
