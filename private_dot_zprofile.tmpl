@@ -13,8 +13,8 @@ export PATH="$HOME/.local/bin:$PATH"
 {{ end -}}
 
 {{- if eq .chezmoi.os "linux" }}
-# Refresh VOMS proxy once per day
-if command -v voms-agent >/dev/null 2>&1; then
+# Refresh VOMS proxy once per day (needs the ssh-agent for its passphrase)
+if [ -S "${SSH_AUTH_SOCK-}" ] && command -v voms-agent >/dev/null 2>&1; then
    voms-agent --quiet
 fi
 {{- end }}

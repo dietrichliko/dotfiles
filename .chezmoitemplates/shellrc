@@ -66,6 +66,7 @@ fi
 
 # conda & mamba
 _conda=/groups/hephy/cms/dietrich.liko/miniforge3
+export MAMBA_ROOT_PREFIX="$_conda"   # required by mamba >= 2.0
 for _f in conda mamba; do
     [ -r "$_conda/etc/profile.d/$_f.sh" ] && source "$_conda/etc/profile.d/$_f.sh"
 done
