@@ -10,7 +10,7 @@ Three named locations, auto-detected in `.chezmoi.toml.tmpl`:
 |---|---|---|
 | `desktop` | personal machines: macOS and Fedora 45 Silverblue (default) | fallback |
 | `lxplus` | CERN lxplus cluster | hostname matches `lxplus\d+\.cern\.ch` |
-| `clip` | Vienna ÖAW CBE cluster | hostname matches `.*\.cbe\.vbc\.ac\.at` |
+| `clip` | Vienna VBC clusters: CLIP and CBE next (same `/groups` storage and modules) | hostname ends in `.cbe.vbc.ac.at` or `.clip.vbc.ac.at` |
 
 The detected location is stored as `.location` and used throughout templates.
 
