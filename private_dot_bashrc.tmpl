@@ -1,15 +1,8 @@
 # .bashrc
-# Source global definitions
+# This file is managed by chezmoi. DO NOT EDIT
 
-# {{ (gitHubLatestTag "junegunn/fzf").Name }}
-
-if [ -f /etc/bashrc ]; then
-    . /etc/bashrc
-fi
-
-if [ -f ~/.bash_funcs ]; then
-    . ~/.bash_funcs
-fi
+[ -f /etc/bashrc ] && . /etc/bashrc
+[ -f ~/.bash_funcs ] && . ~/.bash_funcs
 
 HISTTIMEFORMAT="%d/%m/%y %T "
 HISTSIZE=500000
@@ -19,97 +12,9 @@ HISTCONTROL="erasedups:ignoreboth"
 shopt -s no_empty_cmd_completion
 shopt -s globstar
 shopt -s nocaseglob
-shopt -s autocd 
+shopt -s autocd
 shopt -s dirspell
 shopt -s cdspell
 shopt -s direxpand
 
-# CERN gitlab as default
-export GITLAB_HOST=gitlab.cern.ch
-
-{{ $afs_work := printf "/afs/cern.ch/work/%s/%s" (substr 0 1 .chezmoi.username) .chezmoi.username -}}
-{{- if stat $afs_work -}}
-export CDPATH="~/working:{{ $afs_work }}"
-{{- else -}}
-export CDPATH="~/working"
-{{- end -}}
-
-{{ if hasPrefix "/afs" .chezmoi.homeDir }}
-export UV_LINK_MODE=copy
-export X509_USER_PROXY="$HOME/private/x509up_u$(id -u)"
-{{ end }}
-
-# Local caches (chezmoi-managed)
-[ -f "{{ .chezmoi.homeDir }}/.config/local-cache.sh" ] && source "{{ .chezmoi.homeDir }}/.config/local-cache.sh"
-
-# iTerm2 shell integration (guard so other terminals don't error)
-if [[ -n "$ITERM_SESSION_ID" && -r "{{ .chezmoi.homeDir }}/.iterm2_shell_integration.bash" ]]; then
-    source "{{ .chezmoi.homeDir }}/.iterm2_shell_integration.bash"
-    export ITERM2_SQUELCH_MARK=1
-fi
-
-# VS Code Shell Integration
-if [[ "$TERM_PROGRAM" == "vscode" ]]; then
-    . "$(code --locate-shell-integration-path bash)"
-fi
-
-# direnv (guard if not installed)
-if command -v direnv >/dev/null 2>&1; then
-    export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
-    eval "$(direnv hook bash)"
-fi
-
-# starship (guard if not installed)
-if command -v starship >/dev/null 2>&1; then
-    eval "$(starship init bash)"
-fi
-
-# zoxide (guard if not installed)
-if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init bash)"
-fi
-
-# fzf integration (load after prompt)
-if command -v fzf >/dev/null 2>&1; then
-    # User-level fzf config (installed by the fzf installer)
-    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
-    # Try to derive prefix from the fzf binary path (works for Homebrew, MacPorts, etc.)
-    _fzf_bin=$(command -v fzf)
-    _fzf_prefix="${_fzf_bin%/*/*}"
-    _fzf_sourced=""
-    if [ -r "$_fzf_prefix/share/fzf/shell/completion.bash" ]; then
-        source "$_fzf_prefix/share/fzf/shell/completion.bash"
-        [ -r "$_fzf_prefix/share/fzf/shell/key-bindings.bash" ] && source "$_fzf_prefix/share/fzf/shell/key-bindings.bash"
-        _fzf_sourced=1
-    fi
-
-    # Fallbacks: MacPorts packaged locations
-    if [ -z "$_fzf_sourced" ]; then
-        if [ -r /opt/local/share/fzf/shell/completion.bash ]; then
-            source /opt/local/share/fzf/shell/completion.bash
-            source /opt/local/share/fzf/shell/key-bindings.bash
-        elif [ -r /opt/local/etc/profile.d/fzf.bash ]; then
-            source /opt/local/etc/profile.d/fzf.bash
-        fi
-    fi
-
-    # Prefer fd for faster indexing when available
-    if command -v fd >/dev/null 2>&1; then
-        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-    fi
-fi
-
-{{ if .conda }}
-# setup conda & mamba (interactive shells only)
-if [[ $- == *i* ]]; then
-    if [ -r "{{ .conda }}/etc/profile.d/conda.sh" ]; then
-        source "{{ .conda }}/etc/profile.d/conda.sh"
-    fi
-    if [ -r "{{ .conda }}/etc/profile.d/mamba.sh" ]; then
-        source "{{ .conda }}/etc/profile.d/mamba.sh"
-    fi
-fi
-{{ end }}
-
+{{ includeTemplate "shellrc" (merge (dict "shell" "bash") .) }}

@@ -1,0 +1,59 @@
+{{- /*
+  Common interactive shell setup shared by .zshrc and .bashrc.
+  Call with: includeTemplate "shellrc" (merge (dict "shell" "zsh") .)
+*/ -}}
+# CERN gitlab as default
+export GITLAB_HOST=gitlab.cern.ch
+
+# cd path: include AFS work area if it exists
+{{- $afs_work := printf "/afs/cern.ch/work/%s/%s" (substr 0 1 .chezmoi.username) .chezmoi.username }}
+{{- if stat $afs_work }}
+CDPATH="$HOME/working:{{ $afs_work }}"
+{{- else }}
+CDPATH="$HOME/working"
+{{- end }}
+{{- if hasPrefix "/afs" .chezmoi.homeDir }}
+
+export UV_LINK_MODE=copy
+export X509_USER_PROXY="$HOME/private/x509up_u$(id -u)"
+{{- end }}
+
+# Local caches (chezmoi-managed)
+[ -f "$HOME/.config/local-cache.sh" ] && source "$HOME/.config/local-cache.sh"
+
+# iTerm2 shell integration
+if [[ -n "$ITERM_SESSION_ID" && -r "$HOME/.iterm2_shell_integration.{{ .shell }}" ]]; then
+    source "$HOME/.iterm2_shell_integration.{{ .shell }}"
+    export ITERM2_SQUELCH_MARK=1
+fi
+
+# VS Code shell integration
+if [[ "$TERM_PROGRAM" == "vscode" ]] && command -v code >/dev/null 2>&1; then
+    . "$(code --locate-shell-integration-path {{ .shell }})"
+fi
+
+# Tool hooks (each guarded in case the tool is not installed)
+if command -v direnv >/dev/null 2>&1; then
+    export DIRENV_LOG_FORMAT=$'\E[2mdirenv: %s\E[0m'
+    eval "$(direnv hook {{ .shell }})"
+fi
+
+command -v starship >/dev/null 2>&1 && eval "$(starship init {{ .shell }})"
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init {{ .shell }})"
+
+# fzf key bindings and completion (fzf >= 0.48)
+if command -v fzf >/dev/null 2>&1; then
+    eval "$(fzf --{{ .shell }} 2>/dev/null)"
+    if command -v fd >/dev/null 2>&1; then
+        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    fi
+fi
+{{- if .conda }}
+
+# conda & mamba
+for _f in conda mamba; do
+    [ -r "{{ .conda }}/etc/profile.d/$_f.sh" ] && source "{{ .conda }}/etc/profile.d/$_f.sh"
+done
+unset _f
+{{- end }}

@@ -18,11 +18,3 @@ if command -v voms-agent >/dev/null 2>&1; then
    voms-agent --quiet
 fi
 {{- end }}
-
-# Source ~/.zshrc only for interactive shells
-if [[ -o interactive ]]; then
-    if [ -f ~/.zshrc ]; then
-        source ~/.zshrc
-    fi
-fi
-
