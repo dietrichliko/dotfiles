@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# cbe-login — make sure a valid VBC SSH certificate is loaded in ssh-agent.
+#
+# Intended to be called from ~/.ssh/config:
+#
+#   Match originalhost cbe.next,sshjump.vbc.ac.at exec "~/.local/libexec/cbe-login"
+#
+# It always exits 1, so the Match block never applies any options; it is
+# only used for its side effect of running `step ssh login` when needed.
+#
+# Environment:
+#   CBE_LOGIN_MARGIN   minimum remaining lifetime (date -v syntax, default 30M)
+#   CBE_LOGIN_VALIDITY requested certificate lifetime (default 24h)
+
+set -o pipefail
+
+readonly IDENTITY=vbc-cbe   # step ssh login identity; shows up as the key comment in ssh-add -L
+readonly PROVISIONER=VBC_user
+readonly MARGIN=${CBE_LOGIN_MARGIN:-30M}
+readonly VALIDITY=${CBE_LOGIN_VALIDITY:-24h}
+readonly LOCKDIR=${TMPDIR:-/tmp}/cbe-login.$UID.lock
+
+# Return 0 if a certificate for $IDENTITY in the agent is valid for at least $MARGIN.
+cert_valid() {
+  local limit line to
+  limit=$(date -v+"$MARGIN" +%Y-%m-%dT%H:%M:%S) || return 1
+  while IFS= read -r line; do
+    to=$(printf '%s\n' "$line" | ssh-keygen -L -f - 2>/dev/null | awk '/Valid:/ {print $NF}')
+    [[ -n $to && $to > $limit ]] && return 0
+  done < <(ssh-add -L 2>/dev/null | grep -- '-cert-v01@openssh.com' | grep -- "$IDENTITY")
+  return 1
+}
+
+main() {
+  cert_valid && return
+
+  # Serialize concurrent ssh invocations (e.g. VS Code, ProxyJump) so only one
+  # browser login happens. Stale locks older than 5 minutes are removed.
+  local waited=0
+  until mkdir "$LOCKDIR" 2>/dev/null; do
+    if [[ -n $(find "$LOCKDIR" -maxdepth 0 -mmin +5 2>/dev/null) ]]; then
+      rmdir "$LOCKDIR" 2>/dev/null
+      continue
+    fi
+    (( waited++ >= 300 )) && return
+    sleep 1
+  done
+  trap 'rmdir "$LOCKDIR" 2>/dev/null' EXIT
+  trap 'exit 1' INT TERM
+
+  # Another process may have logged in while we waited for the lock.
+  cert_valid && return
+
+  echo "cbe-login: no valid VBC SSH certificate, starting browser login ..." >&2
+  # Keep stdout clean: ssh/scp/rsync may use it.
+  step ssh login --provisioner="$PROVISIONER" --not-after="$VALIDITY" "$IDENTITY" >&2 ||
+    echo "cbe-login: step ssh login failed" >&2
+}
+
+main
+exit 1
