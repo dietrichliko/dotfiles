@@ -34,7 +34,9 @@ Host lxplus lxplus.cern.ch delphi
   Hostname lxplus.cern.ch
   User liko
   ForwardAgent yes
-  ServerAliveInterval 100
+  # detect a dead (e.g. after sleep) shared connection within 45 s
+  ServerAliveInterval 15
+  ServerAliveCountMax 3
   PubkeyAuthentication no
   HostbasedAuthentication no
   PasswordAuthentication no

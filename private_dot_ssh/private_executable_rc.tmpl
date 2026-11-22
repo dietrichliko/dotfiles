@@ -1,44 +1,26 @@
 {{- if hasPrefix "/afs/" .chezmoi.homeDir -}}
 #!/bin/sh
+# ~/.ssh/rc on AFS hosts (lxplus). sshd runs it for every session before
+# the shell; it must not write to stdout.
 
-LOGDIR="$HOME"
-HOSTNAME=$(hostname -s)
-LOGFILE="$LOGDIR/.krenew_${HOSTNAME}.log"
+# Because this file exists, sshd does not run xauth itself: add the X11
+# cookie here (recipe from sshd(8)).
+if read proto cookie && [ -n "$DISPLAY" ] && [ -n "$cookie" ]; then
+    case $DISPLAY in
+        localhost:*) echo add "unix:${DISPLAY#localhost:}" "$proto" "$cookie" ;;
+        *)           echo add "$DISPLAY" "$proto" "$cookie" ;;
+    esac | xauth -q -
+fi
 
-log() {
-    printf '%s: %s\n' "$(date '+%F %T')" "$*" >> "$LOGFILE"
-}
-
-# Exit silently if home is not writable
-if [ ! -w "$LOGDIR" ]; then
+# Keep the Kerberos ticket and AFS token of this login alive. The ticket
+# cache is per user and node (/run/user/$UID/krb5cc), so one detached
+# krenew per user is enough; -t runs aklog after each renewal.
+command -v krenew >/dev/null 2>&1 || exit 0
+klist -s 2>/dev/null || exit 0
+pidfile="/run/user/$(id -u)/krenew.pid"
+if [ -f "$pidfile" ] && kill -0 "$(cat "$pidfile")" 2>/dev/null; then
     exit 0
 fi
-
-# Only proceed if krenew exists
-if ! command -v krenew >/dev/null 2>&1; then
-    exit 0
-fi
-
-# Start only one krenew per user on this node
-if ! pgrep -u "$USER" -f "krenew -K" >/dev/null 2>&1; then
-
-    log "Starting krenew"
-
-    # Optional: warn if ticket is not renewable
-    if command -v klist >/dev/null 2>&1; then
-        if ! klist -f 2>/dev/null | grep -q "R"; then
-            log "Warning: Ticket is not renewable"
-        fi
-    fi
-
-    # Start krenew in background
-    krenew -K 30 -v >> "$LOGFILE" 2>&1 &
-    log "krenew started"
-fi
-
-# Keep only last 7 logs (safe cleanup)
-ls -1t "$LOGDIR"/.krenew_*.log 2>/dev/null | tail -n +8 | xargs -r rm --
-
+krenew -b -t -K 30 -p "$pidfile" </dev/null >/dev/null 2>&1
 exit 0
 {{- end -}}
-
