@@ -101,8 +101,7 @@
     "vimcmd",
     "xattr",
     "xauth",
-    "zfunc",
-    "zfuncs"
+    "zfunc"
   ],
   "files.associations": {
     "*.tmpl": "plaintext"

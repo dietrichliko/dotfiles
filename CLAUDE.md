@@ -43,6 +43,7 @@ The `.location` variable comes from `.chezmoi.toml.tmpl` and must be one of the 
 
 - All platforms: uv, uvx, bat, bat-extras, fd, rg, dust, hyperfine, sd, git-cliff, zoxide, btm, procs, tldr, gping, glow
 - Linux only (macOS uses MacPorts): fzf, direnv, starship, gh, eza, glab
+- iTerm2 shell integration scripts (`~/.iterm2_shell_integration.{zsh,bash}`)
 - `$target` is the Rust triple; Linux always uses the static `musl` builds
 - Asset names are matched with globs (`bat-*-%s.tar.gz`) and versioned archive
   directories are removed with `stripComponents = 1`, so no version lookups are needed
@@ -58,18 +59,19 @@ The `.location` variable comes from `.chezmoi.toml.tmpl` and must be one of the 
 | `.chezmoi.toml.tmpl` | chezmoi config; defines `.location` and other variables |
 | `.chezmoiexternal.toml.tmpl` | external binary downloads |
 | `.chezmoiignore.tmpl` | files excluded per location |
-| `.chezmoitemplates/shellrc` | interactive setup shared by zsh and bash (hooks, fzf, conda, AFS) |
+| `.chezmoitemplates/shellrc` | interactive setup shared by zsh and bash (hooks, fzf, conda, AFS caches) |
 | `private_dot_zshrc.tmpl` / `private_dot_bashrc.tmpl` | shell-specific options, then include `shellrc` |
-| `private_dot_zfuncs/` | zsh autoloaded functions |
+| `private_dot_config/shell/funcs.sh` | shell functions for zsh and bash (`showpath`, CVMFS setups) |
+| `.chezmoiremove` | formerly managed files to delete on apply |
 | `private_dot_config/starship.toml` | starship prompt (gruvbox dark) |
 | `private_dot_config/direnv/` | direnv config + CERN-specific layouts |
 | `private_dot_ssh/` | SSH config (private) |
-| `private_dot_local/bin/` | helper scripts (grid certs, bitwarden SSH) |
+| `private_dot_local/bin/`, `libexec/` | helper scripts (grid certs, bitwarden SSH, `cbe-login` step-ca hook) |
 | `.chezmoiscripts/` | post-apply hooks |
 
 ## AFS caching
 
-When `$HOME` is on AFS (`/afs/...`), caches are redirected to `/tmp` to avoid AFS quota exhaustion. This affects: pip, uv, cargo, go, npm, starship, and XDG runtime/cache/state dirs.
+When `$HOME` is on AFS (`/afs/...`), `shellrc` redirects caches to `/tmp` to avoid AFS quota exhaustion. This affects: pip, uv, cargo, go, npm, starship, and XDG runtime/cache/state dirs.
 
 ## Applying changes
 

@@ -1,0 +1,9 @@
+# Files that used to be managed and were replaced; removed on apply.
+.bash_funcs
+.config/local-cache.sh
+.zfuncs/lcg-view-setup
+.zfuncs/ldpath
+.zfuncs/path
+.zfuncs/py27path
+.zfuncs/py3path
+.zfuncs/pypath

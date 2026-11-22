@@ -14,12 +14,25 @@ CDPATH="$HOME/working"
 {{- end }}
 {{- if hasPrefix "/afs" .chezmoi.homeDir }}
 
+# AFS home: keep caches in /tmp to avoid exhausting the AFS quota
+export XDG_CACHE_HOME="/tmp/$USER-cache"
+export XDG_STATE_HOME="/tmp/$USER-state"
+export XDG_RUNTIME_DIR="/tmp/$USER-runtime"
+mkdir -p "$XDG_CACHE_HOME" "$XDG_STATE_HOME" "$XDG_RUNTIME_DIR"
+export STARSHIP_CACHE="$XDG_CACHE_HOME/starship"
+export PIP_CACHE_DIR="$XDG_CACHE_HOME/pip"
+export PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/pycache"
+export UV_CACHE_DIR="$XDG_CACHE_HOME/uv"
 export UV_LINK_MODE=copy
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+export CARGO_HOME="$XDG_CACHE_HOME/cargo"
+export GOCACHE="$XDG_CACHE_HOME/go/build"
+export GOMODCACHE="$XDG_CACHE_HOME/go/pkg/mod"
 export X509_USER_PROXY="$HOME/private/x509up_u$(id -u)"
 {{- end }}
 
-# Local caches (chezmoi-managed)
-[ -f "$HOME/.config/local-cache.sh" ] && source "$HOME/.config/local-cache.sh"
+# Shared functions (path printers, CVMFS setups)
+[ -f "$HOME/.config/shell/funcs.sh" ] && source "$HOME/.config/shell/funcs.sh"
 
 # iTerm2 shell integration
 if [[ -n "$ITERM_SESSION_ID" && -r "$HOME/.iterm2_shell_integration.{{ .shell }}" ]]; then
@@ -49,11 +62,12 @@ if command -v fzf >/dev/null 2>&1; then
         export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
     fi
 fi
-{{- if .conda }}
+{{- if eq .location "clip" }}
 
 # conda & mamba
+_conda=/groups/hephy/cms/dietrich.liko/miniforge3
 for _f in conda mamba; do
-    [ -r "{{ .conda }}/etc/profile.d/$_f.sh" ] && source "{{ .conda }}/etc/profile.d/$_f.sh"
+    [ -r "$_conda/etc/profile.d/$_f.sh" ] && source "$_conda/etc/profile.d/$_f.sh"
 done
-unset _f
+unset _f _conda
 {{- end }}

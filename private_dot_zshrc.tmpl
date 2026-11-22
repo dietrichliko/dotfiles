@@ -3,11 +3,6 @@
 
 autoload -U compinit; compinit
 
-# Autoload all functions in ~/.zfuncs
-fpath=(~/.zfuncs $fpath)
-for _func in $fpath[1]/*(N:t); do autoload -U $_func; done
-unset _func
-
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000

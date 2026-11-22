@@ -1,13 +1,10 @@
 [data]
 {{- if regexMatch "lxplus\\d+\\.cern\\.ch" .chezmoi.fqdnHostname }}
     location = "lxplus"
-    conda = ""
 {{ else if regexMatch ".*\\.cbe\\.vbc\\.ac\\.at" .chezmoi.fqdnHostname }}
     location = "clip"
-    conda = "/groups/hephy/cms/dietrich.liko/miniforge3"
 {{ else }}
     location = "desktop"
-    conda = ""
 {{ end -}}
 [edit]
     command = "vi"

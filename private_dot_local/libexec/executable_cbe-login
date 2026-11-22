@@ -10,14 +10,14 @@
 #
 # Environment:
 #   CBE_LOGIN_MARGIN   minimum remaining lifetime (date -v syntax, default 30M)
-#   CBE_LOGIN_VALIDITY requested certificate lifetime (default 24h)
+#   CBE_LOGIN_VALIDITY requested certificate lifetime (default 23h; the VBC CA allows at most 24h incl. 1m backdating)
 
 set -o pipefail
 
 readonly IDENTITY=vbc-cbe   # step ssh login identity; shows up as the key comment in ssh-add -L
 readonly PROVISIONER=VBC_user
 readonly MARGIN=${CBE_LOGIN_MARGIN:-30M}
-readonly VALIDITY=${CBE_LOGIN_VALIDITY:-24h}
+readonly VALIDITY=${CBE_LOGIN_VALIDITY:-23h}
 readonly LOCKDIR=${TMPDIR:-/tmp}/cbe-login.$UID.lock
 
 # Return 0 if a certificate for $IDENTITY in the agent is valid for at least $MARGIN.

@@ -1,5 +1,6 @@
 {{- /*
-  Binaries downloaded to ~/.local/bin from GitHub/GitLab releases.
+  Binaries downloaded to ~/.local/bin from GitHub/GitLab releases,
+  plus the iTerm2 shell integration scripts.
 
   Naming schemes used by the upstream release assets:
     $target   Rust target triple, e.g. x86_64-unknown-linux-musl, aarch64-apple-darwin
@@ -19,6 +20,13 @@
 {{- $target := ternary (printf "%s-unknown-linux-musl" $rustArch) (printf "%s-apple-darwin" $rustArch) $linux }}
 
 {{- /* ---------- all platforms ---------- */}}
+{{- range list "zsh" "bash" }}
+
+[".iterm2_shell_integration.{{ . }}"]
+   type = "file"
+   url = "https://iterm2.com/shell_integration/{{ . }}"
+   refreshPeriod = "168h"
+{{- end }}
 {{- $batExtras := gitHubLatestReleaseAssetURL "eth-p/bat-extras" "bat-extras-*.zip" }}
 {{- range list "batdiff" "batgrep" "batman" "batpipe" "batwatch" "prettybat" }}
 
