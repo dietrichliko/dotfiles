@@ -1,0 +1,35 @@
+{{- /*
+  Install or upgrade Python CLI tools with `uv tool`, once a week.
+
+  `uv tool install --upgrade` installs a missing tool and upgrades an
+  installed one (including its dependencies). The week number below changes
+  the rendered script every 7 days, so chezmoi runs it again, matching the
+  weekly refresh of the downloaded binaries in .chezmoiexternal.toml.tmpl.
+  Runs before 20-globus, which needs ssh-crypt.
+*/ -}}
+#!/bin/bash
+# week: {{ div (unixEpoch now | atoi) 604800 }}
+
+set -uo pipefail
+
+UV="$HOME/.local/bin/uv"
+if [[ ! -x $UV ]]; then
+    echo "uv-tools: $UV not found, skipping" >&2
+    exit 0
+fi
+
+rc=0
+install() {
+    echo "uv-tools: $1"
+    "$UV" tool install --quiet --upgrade "$@" || { echo "uv-tools: failed: $1" >&2; rc=1; }
+}
+
+# Encrypt/decrypt with the ssh-agent key (used for ~/.globus)
+install ssh-crypt
+{{- if eq .chezmoi.os "linux" }}
+
+# VOMS proxy renewal with the passphrase stored via the ssh-agent
+install voms-agent --index https://gitlab.cern.ch/api/v4/projects/liko%2Fvoms-agent/packages/pypi/simple
+{{- end }}
+
+exit $rc

@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# lxplus-login — make sure a shared SSH connection (ControlMaster) to lxplus
+# exists, answering the password and 2FA prompts from Bitwarden.
+#
+# Called from ~/.ssh/config before every connection to lxplus or delphi:
+#
+#   Match originalhost lxplus,lxplus.cern.ch,delphi exec "~/.local/libexec/lxplus-login %n"
+#
+# If no shared connection is open yet, it starts one in the background with
+# `ssh -MNf`, using bw-ssh_helper.sh as SSH_ASKPASS. The calling ssh (or scp,
+# rsync, git, VS Code) then reuses it without any prompt.
+#
+# It always exits 1, so the Match block never applies any options. If the
+# login fails, ssh simply continues with its normal prompts.
+
+# The ssh calls below evaluate the Match block again: do nothing there.
+[[ -n ${LXPLUS_LOGIN_ACTIVE-} ]] && exit 1
+export LXPLUS_LOGIN_ACTIVE=1
+
+readonly HOST=${1:?usage: lxplus-login HOST}
+LIBEXEC=$(cd "$(dirname "$0")" && pwd)
+readonly LIBEXEC
+readonly LOG=${TMPDIR:-/tmp}/lxplus-login.$UID.log
+
+master_alive() { ssh -O check "$HOST" >/dev/null 2>&1; }
+
+# Load BW_SESSION (from the keychain/keyring, or by unlocking). ssh runs this
+# hook with stdin on /dev/null, so an unlock prompt needs /dev/tty.
+bitwarden_session() {
+  [[ -n ${BW_SESSION-} ]] && return 0
+  local input=/dev/null
+  { : </dev/tty; } 2>/dev/null && input=/dev/tty
+  # bw-session.sh enables errexit; contain it in this function's caller.
+  source "$LIBEXEC/bw-session.sh" <"$input" >&2
+  local rc=$?
+  set +e
+  return $rc
+}
+
+main() {
+  master_alive && return
+
+  local cp
+  cp=$(ssh -G "$HOST" 2>/dev/null | awk '$1 == "controlpath" { print $2 }')
+  [[ -n $cp && $cp != none ]] || return   # multiplexing not configured
+
+  # Serialize parallel connections (VS Code opens several at once) so only
+  # one login happens. A stale lock older than 2 minutes is removed.
+  # LOCK is global: the EXIT trap runs after main has returned.
+  LOCK=$cp.lock
+  local waited=0
+  until mkdir "$LOCK" 2>/dev/null; do
+    if [[ -n $(find "$LOCK" -maxdepth 0 -mmin +2 2>/dev/null) ]]; then
+      rmdir "$LOCK" 2>/dev/null
+      continue
+    fi
+    (( waited++ >= 120 )) && return
+    sleep 1
+  done
+  trap 'rmdir "$LOCK" 2>/dev/null' EXIT
+  trap 'exit 1' INT TERM
+
+  # Another connection may have logged in while we waited for the lock.
+  master_alive && return
+
+  if ! bitwarden_session || [[ -z ${BW_SESSION-} ]]; then
+    echo "lxplus-login: no Bitwarden session (unlock it in a terminal); using normal login" >&2
+    return
+  fi
+
+  echo "lxplus-login: opening shared connection for $HOST ..." >&2
+  if ! SSH_ASKPASS="$LIBEXEC/bw-ssh_helper.sh" SSH_ASKPASS_REQUIRE=force \
+       ssh -MNf -o ConnectTimeout=20 "$HOST" </dev/null 2>"$LOG"; then
+    echo "lxplus-login: login failed, using normal login. Last lines of $LOG:" >&2
+    tail -n 3 "$LOG" >&2
+  fi
+}
+
+main
+exit 1

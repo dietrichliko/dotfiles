@@ -7,3 +7,4 @@
 .zfuncs/py27path
 .zfuncs/py3path
 .zfuncs/pypath
+.local/bin/bw-ssh

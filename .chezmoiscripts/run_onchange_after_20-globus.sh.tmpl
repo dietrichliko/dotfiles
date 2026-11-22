@@ -1,0 +1,61 @@
+{{- /*
+  Install the grid certificate into ~/.globus.
+
+  The files are kept in .secrets/globus/ encrypted with ssh-crypt, i.e. with
+  a key derived from an ed25519 signature by the ssh-agent (local, or
+  forwarded with ssh -A). Re-encrypt after renewing the certificate:
+
+    ssh-crypt -e -k Dietrich.Liko@oeaw.ac.at -i ~/.globus/userkey.pem \
+              -o .secrets/globus/userkey.pem.sshcrypt
+
+  This script runs again whenever one of the encrypted files changes
+  (their hashes are part of the rendered script).
+*/ -}}
+{{- $files := list "usercert.pem" "userkey.pem" }}
+{{- if eq .location "desktop" }}{{ $files = append $files "myCertificate.p12" }}{{ end -}}
+#!/bin/bash
+# Decrypt the grid certificate into ~/.globus (managed by chezmoi).
+{{- range $files }}
+# {{ . }}: {{ include (printf ".secrets/globus/%s.sshcrypt" .) | sha256sum }}
+{{- end }}
+
+set -uo pipefail
+
+readonly KEY='Dietrich.Liko@oeaw.ac.at'   # ed25519 key comment in ssh-add -l
+readonly SRC={{ joinPath .chezmoi.sourceDir ".secrets/globus" | quote }}
+readonly DEST="$HOME/.globus"
+
+fail() {
+    echo "globus: $*" >&2
+    echo "globus: ~/.globus not updated; run 'chezmoi apply' again later." >&2
+    exit 1
+}
+
+[[ -S ${SSH_AUTH_SOCK-} ]] ||
+    fail "no ssh-agent (connect with 'ssh -A' or run ssh-add)"
+ssh-add -l 2>/dev/null | grep -qF "$KEY" ||
+    fail "key '$KEY' is not in the ssh-agent"
+
+if command -v ssh-crypt >/dev/null 2>&1; then
+    ssh_crypt() { ssh-crypt "$@"; }
+elif [[ -x $HOME/.local/bin/uv ]]; then
+    ssh_crypt() { "$HOME/.local/bin/uv" tool run -q ssh-crypt "$@"; }
+else
+    fail "neither ssh-crypt nor ~/.local/bin/uv found"
+fi
+
+umask 077
+mkdir -p "$DEST" || fail "cannot create $DEST"
+chmod 700 "$DEST"
+
+for f in{{ range $files }} {{ . }}{{ end }}; do
+    tmp=$(mktemp "$DEST/.$f.XXXXXX") || fail "cannot create a temporary file in $DEST"
+    if err=$(ssh_crypt -d -k "$KEY" -i "$SRC/$f.sshcrypt" -o "$tmp" 2>&1) && [[ -s $tmp ]]; then
+        chmod 600 "$tmp"
+        mv -f "$tmp" "$DEST/$f"
+    else
+        rm -f "$tmp"
+        fail "cannot decrypt $f: ${err##*$'\n'}"
+    fi
+done
+echo "globus: installed{{ range $files }} {{ . }}{{ end }} in ~/.globus"

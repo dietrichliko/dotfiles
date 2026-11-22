@@ -66,8 +66,9 @@ The `.location` variable comes from `.chezmoi.toml.tmpl` and must be one of the 
 | `private_dot_config/starship.toml` | starship prompt (gruvbox dark) |
 | `private_dot_config/direnv/` | direnv config + CERN-specific layouts |
 | `private_dot_ssh/` | SSH config (private) |
-| `private_dot_local/bin/`, `libexec/` | helper scripts (grid certs, bitwarden SSH, `cbe-login` step-ca hook) |
-| `.chezmoiscripts/` | post-apply hooks |
+| `private_dot_local/bin/`, `libexec/` | helper scripts: grid certs; ssh hooks `cbe-login` (step-ca certificate) and `lxplus-login` (shared connection, password + 2FA from Bitwarden) |
+| `.chezmoiscripts/` | post-apply hooks: `10-uv-tools` installs/upgrades ssh-crypt and voms-agent (Linux) weekly via `uv tool`; `20-globus` installs `~/.globus` |
+| `.secrets/globus/` | grid certificate encrypted with `ssh-crypt` (ed25519 key in the ssh-agent); ignored by chezmoi as a dot-directory |
 
 ## AFS caching
 

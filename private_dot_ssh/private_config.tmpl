@@ -26,6 +26,13 @@ Host cmsconnect login-el7.uscms.org
   User liko
   ForwardAgent yes
 
+{{- if eq .location "desktop" }}
+
+# Open a shared lxplus connection, with password and 2FA from Bitwarden,
+# when none exists yet (always exits 1)
+Match originalhost lxplus,lxplus.cern.ch,delphi exec "~/.local/libexec/lxplus-login %n"
+{{- end }}
+
 # lxplus with two accounts: delphi uses the dliko account
 Host delphi
   User dliko
