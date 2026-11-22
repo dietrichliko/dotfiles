@@ -2,6 +2,11 @@
   Common interactive shell setup shared by .zshrc and .bashrc.
   Call with: includeTemplate "shellrc" (merge (dict "shell" "zsh") .)
 */ -}}
+# vim as editor
+alias vi='vim'
+export EDITOR=vim
+export VISUAL=vim
+
 # CERN gitlab as default
 export GITLAB_HOST=gitlab.cern.ch
 
@@ -52,7 +57,11 @@ if command -v direnv >/dev/null 2>&1; then
 fi
 
 command -v starship >/dev/null 2>&1 && eval "$(starship init {{ .shell }})"
-command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init {{ .shell }})"
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init {{ .shell }})"
+    # fzf layout and directory preview for `zi`
+    export _ZO_FZF_OPTS="--height=40% --reverse --border --preview 'ls -la {2..}'"
+fi
 
 # fzf key bindings and completion (fzf >= 0.48)
 if command -v fzf >/dev/null 2>&1; then
