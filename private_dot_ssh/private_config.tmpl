@@ -73,29 +73,6 @@ Host hepgpu2
     
 
 {{- if eq .location "desktop" }}
-Host blau ssh-blau ssh-blau.mbi-ai.dev
-  Hostname ssh-blau.mbi-ai.dev
-  User core
-  ForwardAgent yes
-  ProxyCommand cloudflared access ssh --hostname %h
-
-Host pauli ssh-pauli ssh-pauli.mbi-ai.dev
-  Hostname ssh-pauli.mbi-ai.dev
-  User dgxspark
-  ForwardAgent yes
-  ProxyCommand cloudflared access ssh --hostname %h
-
-Host blau-local blau-local.mbi-ai.dev
-  Hostname blau-local.mbi-ai.dev
-  User core
-  ForwardAgent yes
-  User dietrich
-
-Host pauli-local pauli-local.mbi-ai.dev
-  Hostname pauli-local.mbi-ai.dev
-  User dgxspark
-  ForwardAgent yes
-
 Host galileo-local
   Hostname galileo.lan
   User sshd
