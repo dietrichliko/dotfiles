@@ -1,0 +1,42 @@
+{
+  "model": "sonnet",
+  "tui": "fullscreen",
+  "theme": "dark",
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(fly deploy:*) — scope to vfgh-bench.fly.dev app, review before deploying to this public-facing fly app",
+      "Bash(podman push:*) — scope to this project's image, avoid publishing images unintentionally from a public repo context"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: PUBLIC — dietrichliko/vfgh-llm-bench (github.com) — any push publishes immediately",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: Secrets read from /run/secrets/<NAME> or env var <NAME> per README; never in config (config/providers.yaml); .gitignore excludes .env, .env.*, deploy/secrets/",
+      "**Default / protected branches**: main (default); no rulesets or branch protection listed via gh for dietrichliko/vfgh-llm-bench",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine with open internet",
+      "**Source control**: The trusted repo (dietrichliko/vfgh-llm-bench, github.com:dietrichliko/vfgh-llm-bench.git) and its remote only",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: vfgh-llm-bench.mbi-ai.dev, vfgh-bench.fly.dev (fly.io app host contacted in recent usage); data.bka.gv.at (RIS legislation data source referenced in project docs and usage)",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: /run/secrets/<NAME> and env vars named <NAME> for provider/API secrets; deploy/secrets/ directory; .env and .env.* files (gitignored) — share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (vfgh-llm-bench / ratio-lab web application and evaluation pipeline)",
+      "**Trusted repo**: dietrichliko/vfgh-llm-bench (github.com), public — only this repo's own work may be pushed there; confidential material should not be committed given public visibility",
+      "**Org-specific CLIs**: None configured — routine CLIs observed in this project: uv, podman, fly, uvx, skopeo, pre-commit"
+    ]
+  }
+}
